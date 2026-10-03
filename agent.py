@@ -1009,7 +1009,7 @@ def validate(spec, code, runner, required_checks):
                 e, stp = spec["explorations"][i], spec["explorations"][i]["steps"][j]
                 add("error", "explorations", f"exploration {i + 1} step {j + 1} ('{e['title']}' / '{stp['label']}') expect "
                     f"`{stp['expect']}` is not true at its preset {_brief_state(stp['preset'])}: "
-                    f"{extra[0].get('err') or 'got ' + str(extra[0].get('val'))}. out = {res['sig'][:500]}")
+                    f"{extra[0].get('err') or 'got ' + str(extra[0].get('val'))}. out = {res['sig'][:300]}")
         elif kind == "test":
             base_sig[f"test '{spec['tests'][label]['label']}'"] = res["sig"]
             ok = all(v.get("pass") for v in extra)
@@ -1017,7 +1017,7 @@ def validate(spec, code, runner, required_checks):
             if not ok:
                 t = spec["tests"][label]
                 add("error", "tests", f"test '{t['label']}' failed: expect `{t['expect']}` with state {_brief_state(t['state'])} "
-                    f"-> {extra[0].get('err') or 'got ' + str(extra[0].get('val'))}. out = {res['sig'][:500]}")
+                    f"-> {extra[0].get('err') or 'got ' + str(extra[0].get('val'))}. out = {res['sig'][:300]}")
         elif kind == "fuzz":
             base_sig[f"random state {label}"] = res["sig"]
         elif kind == "edge":
@@ -1308,8 +1308,8 @@ def _facts_table(spec, code, runner):
             if len(facts) >= 18:
                 break
         changed = {k: v for k, v in st.items() if v != defaults.get(k)}
-        lines.append(f"{name}: controls changed vs defaults {json.dumps(changed, ensure_ascii=False)[:300]} -> "
-                     f"{json.dumps(facts, ensure_ascii=False)[:900]}")
+        lines.append(f"{name}: controls changed vs defaults {json.dumps(changed, ensure_ascii=False, separators=(',', ':'))[:300]} -> "
+                     f"{json.dumps(facts, ensure_ascii=False, separators=(',', ':'))[:900]}")
     return "\n".join(lines)
 
 
@@ -1342,7 +1342,7 @@ def review_prompt(case, spec, facts, values=None):
                               "steps": [{"label": st["label"], "preset": st["preset"]} for st in e["steps"]]}
                              for e in spec["explorations"]]
     return "\n".join(["BRIEF", f"focus: {case.get('focus', '')}", f"audience: {case.get('audience', '')}", "",
-                      "PAGE TEXT:", json.dumps(prose, ensure_ascii=False), "",
+                      "PAGE TEXT:", json.dumps(prose, ensure_ascii=False, separators=(",", ":")), "",
                       "COMPUTED VALUES (from the page's own compute function):", facts, "",
                       "In PAGE TEXT, {{...}}⟨=v⟩ shows the value each placeholder renders; check that it describes the "
                       "step the sentence talks about. Write placeholders without the ⟨=v⟩ part.", "",
@@ -1421,7 +1421,7 @@ _REPAIR_KEYS = {"controls": ("controls",), "readouts": ("readouts", "views"), "v
 
 
 def repair_prompt(case, spec, code, issues, required_checks=()):
-    errs = [i for i in issues if i.sev == "error"][:12]
+    errs = [i for i in issues if i.sev == "error"][:8]
     keys = []
     for i in errs:
         extra = (i.ref,) if i.code == "placeholders" and i.ref else ()
@@ -1434,7 +1434,7 @@ def repair_prompt(case, spec, code, issues, required_checks=()):
         lines += ["CHECKS REQUIRED BY THE BRIEF (authoritative facts from the paper; if a test encoding one of these fails, "
                   "the formula/code is wrong: re-derive it from the paper):"] + [f"- {c}" for c in required_checks] + [""]
     lines += ["FAILED CHECKS:"] + [f"- [{i.code}] {i.msg}" for i in errs]
-    lines += ["", "CURRENT DATA (relevant keys only):", json.dumps(slim, ensure_ascii=False),
+    lines += ["", "CURRENT DATA (relevant keys only):", json.dumps(slim, ensure_ascii=False, separators=(",", ":")),
               "", "CURRENT CODE:", code or "(missing)", "", "Return the <patch> and/or <compute> blocks."]
     return "\n".join(lines)
 
