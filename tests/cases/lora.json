@@ -1,0 +1,3 @@
+{"source_url": "https://arxiv.org/abs/2106.09685",
+ "focus": "LoRA: Low-Rank Adaptation of Large Language Models, Section 4.1. Explain the update W = W0 + BA with a rank-r decomposition. Use small matrices the learner can edit and let them change r and the scaling alpha/r. Show the update matrix, its rank, and how many trainable parameters LoRA needs versus full fine-tuning for a d x k layer. Check that the trainable parameter count equals r(d + k) and that with B initialized to zero the adapted weight equals W0.",
+ "audience": "Senior engineering undergraduates who know matrix multiplication"}

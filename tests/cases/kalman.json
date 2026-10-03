@@ -1,0 +1,3 @@
+{"source_url": "https://www.cs.unc.edu/~welch/kalman/media/pdf/Kalman1960.pdf",
+ "focus": "A New Approach to Linear Filtering and Prediction Problems (Kalman, 1960). Explain the one-dimensional Kalman filter for estimating a constant from noisy measurements: the predict step, the Kalman gain K = P/(P+R), and the update of the estimate and its variance. Let the learner change the measurement noise R, the process noise Q and the measurements, and show the estimate, gain and variance over time steps. Show that a larger R makes the filter trust measurements less. Check that the gain always lies between 0 and 1 and that the posterior variance never exceeds the prior variance.",
+ "audience": "Mechanical and electrical engineering undergraduates"}

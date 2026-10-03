@@ -1,0 +1,3 @@
+{"source_url": "https://ee.stanford.edu/~hellman/publications/24.pdf",
+ "focus": "New Directions in Cryptography (Diffie and Hellman, 1976), Section III, public key distribution. Learning outcomes: (1) compute each party's public value Y = alpha^X mod q from a secret X; (2) see that both parties arrive at the same shared key K = alpha^(X1*X2) mod q; (3) understand why an eavesdropper who sees only Y1 and Y2 must solve a discrete logarithm. Use small primes so every number is visible, and let the learner pick q, alpha and both secrets. Verify that both computed keys are always equal.",
+ "audience": "First-year engineering students with no cryptography background"}

@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>/*__TITLE__*/</title>
+<style>
+:root{
+  --bg:#f3f5f8;--paper:#fff;--ink:#141d2b;--ink2:#465263;--ink3:#667185;--line:#d6dce5;--line2:#e7ebf1;
+  --accent:#1d4ed8;--accent2:#1e3a8a;--accentbg:#e9efff;
+  --ok:#137a3a;--okbg:#e8f6ed;--bad:#b42318;--badbg:#fdeceb;
+  --amber:#7c4300;--amberbg:#fff6de;--amberline:#e3a23c;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --serif:"Sitka Text","Sitka",Charter,"Bitstream Charter","Iowan Old Style",Cambria,Georgia,serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"SF Mono",Menlo,monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15.5px/1.55 var(--sans);overflow-wrap:break-word;font-variant-numeric:lining-nums}
+a{color:var(--accent);text-underline-offset:2px}
+.wrap{max-width:1220px;margin:0 auto;padding:0 28px}
+h1,h2,h3{font-family:var(--serif);font-weight:600;line-height:1.2;margin:0;color:var(--ink)}
+h2{font-size:1.65rem;margin:0 0 14px;letter-spacing:-.005em}
+h3{font-size:1.12rem}
+p{margin:0 0 .75em}
+.prose{font-family:var(--serif);font-size:1.07rem;line-height:1.68}
+.prose p:last-child,.prose ul:last-child{margin-bottom:0}
+.lead{color:var(--ink2);max-width:72ch;margin:-4px 0 18px}
+math{font-family:"Cambria Math","STIX Two Math","Latin Modern Math",math}
+code{font-family:var(--mono);font-size:.86em;background:#edf0f5;padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:20px 22px;min-width:0}
+.muted{color:var(--ink3)}
+.undef{color:var(--bad);font-weight:600}
+.btn{font:inherit;font-size:.92rem;font-weight:600;padding:7px 14px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer;line-height:1.3}
+.btn:hover{background:var(--accent2);border-color:var(--accent2)}
+.btn.ghost{background:#fff;color:var(--accent)}
+.btn.ghost:hover{background:var(--accentbg)}
+.btn.sm{padding:4px 10px;font-size:.84rem;font-weight:600}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sec{padding:44px 0 0}
+/* header */
+header.hero{background:#fff;border-bottom:1px solid var(--line);padding:42px 0 24px}
+.hero h1{font-size:clamp(1.85rem,4.3vw,2.8rem);letter-spacing:-.015em;max-width:30ch}
+.subtitle{font-family:var(--serif);font-size:1.18rem;color:var(--ink2);margin:10px 0 0;max-width:68ch}
+.chips{list-style:none;display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 0;padding:0}
+.chips li{border:1px solid var(--line);background:#f8fafc;border-radius:999px;padding:3px 12px;font-size:.88rem;color:var(--ink2);max-width:100%}
+.chips b{color:var(--ink);font-weight:600;margin-right:4px}
+.toc{display:flex;flex-wrap:wrap;gap:4px 18px;margin:22px 0 0;padding:14px 0 0;border-top:1px solid var(--line2);font-size:.92rem}
+.toc a{color:var(--ink2);text-decoration:none}
+.toc a:hover{color:var(--accent);text-decoration:underline}
+.fatal{background:var(--badbg);border:1px solid #f0a8a2;color:#7a1610;border-radius:10px;padding:12px 16px;margin-top:16px}
+/* idea */
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr));gap:20px}
+.two h2{font-size:1.4rem}
+/* equation */
+.eq-display{background:#fff;border:1px solid var(--line);border-radius:12px;padding:26px 16px;overflow-x:auto;text-align:center}
+.eq-display math{font-size:1.45em}
+.eq-cap{font-family:var(--serif);color:var(--ink2);margin:12px 0 0;max-width:80ch}
+.tscroll{overflow-x:auto;margin-top:18px}
+table.symtab,table.ttab{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.symtab th,.symtab td,.ttab th,.ttab td{padding:10px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line2)}
+.symtab th,.ttab th{font-size:.85rem;color:var(--ink2);font-weight:600;background:#f8fafc}
+.symtab td{font-family:var(--serif)}
+.symtab td:first-child{white-space:nowrap;font-size:1.15em}
+.symtab tr:last-child td,.ttab tr:last-child td{border-bottom:0}
+/* steps */
+ol.steps{list-style:none;margin:0;padding:0;display:grid;gap:14px;counter-reset:st}
+ol.steps li{counter-increment:st;display:grid;grid-template-columns:2.4rem minmax(0,1fr);gap:4px 14px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 20px}
+ol.steps li::before{content:counter(st);grid-row:1/span 2;width:2rem;height:2rem;border-radius:50%;background:var(--accentbg);color:var(--accent2);font-weight:700;display:flex;align-items:center;justify-content:center;font-family:var(--sans)}
+/* playground */
+#playground{margin-top:48px;padding:34px 0 40px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background-color:#f6f8fb;background-image:linear-gradient(#e4e9f1 1px,transparent 1px),linear-gradient(90deg,#e4e9f1 1px,transparent 1px);background-size:24px 24px;scroll-margin-top:0}
+.pg-grid{display:grid;grid-template-columns:340px minmax(0,1fr);gap:24px;align-items:start}
+.panel{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow:auto;background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.panel-head{display:flex;justify-content:space-between;align-items:center;gap:8px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.panel-head h3{font-family:var(--sans);font-size:1rem;font-weight:700}
+.stage{min-width:0;display:grid;gap:16px}
+.live-note{font-size:.88rem;color:var(--ink2);margin:0}
+.ctl{padding:12px 6px;border-top:1px solid var(--line2);border-radius:8px}
+.ctl:first-child{border-top:0}
+.ctl .row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.ctl label.main,.ctl .main{font-weight:600;font-size:.95rem}
+input[type=number],select{font:inherit;font-size:.95rem;padding:5px 7px;border:1px solid #b6bfcc;border-radius:6px;background:#fff;color:var(--ink);font-variant-numeric:tabular-nums;max-width:100%}
+select{width:100%;margin-top:6px}
+.num{width:6.4em;text-align:right}
+input[type=range]{width:100%;margin:8px 0 0;accent-color:var(--accent);height:22px;cursor:pointer}
+.minmax{display:flex;justify-content:space-between;font-size:.76rem;color:var(--ink3);margin-top:-2px}
+.help{font-size:.82rem;color:var(--ink3);margin-top:5px;line-height:1.4}
+.dim{font-size:.82rem;color:var(--ink2);background:#f1f4f8;border-radius:999px;padding:1px 9px;font-variant-numeric:tabular-nums}
+.vrow{display:grid;grid-template-columns:minmax(2.6em,auto) minmax(0,1fr) 5.6em;align-items:center;gap:8px;margin-top:6px}
+.vrow label{font-size:.9rem;color:var(--ink2);white-space:nowrap}
+.vrow input[type=range]{margin:0}
+.vrow .num{width:100%}
+.btns{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.mwrap{overflow-x:auto;margin-top:6px}
+table.mat{border-collapse:separate;border-spacing:3px}
+table.mat th{font-size:.8rem;color:var(--ink2);font-weight:600;text-align:center;padding:0 2px;white-space:nowrap}
+table.mat th[scope=row]{text-align:right;padding-right:4px}
+.cell{width:3.9em;font-size:.9rem!important;text-align:right;padding:4px 5px!important;-moz-appearance:textfield;appearance:textfield}
+.cell::-webkit-inner-spin-button,.cell::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.switch{position:relative;display:inline-flex;align-items:center;gap:8px}
+.switch input{position:absolute;left:0;top:0;width:44px;height:24px;margin:0;opacity:0;cursor:pointer;z-index:1}
+.switch .track{width:44px;height:24px;border-radius:12px;background:#b9c1cd;position:relative;transition:background .15s}
+.switch .track::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(15,23,42,.3);transition:transform .15s}
+.switch input:checked+.track{background:var(--accent)}
+.switch input:checked+.track::after{transform:translateX(20px)}
+.switch input:focus-visible+.track{outline:2px solid var(--accent);outline-offset:2px}
+.switch .st{font-size:.86rem;color:var(--ink2);min-width:1.8em}
+.ctl.flash{animation:flash 2.2s ease-out}
+@keyframes flash{0%,45%{background:#fff1c2;box-shadow:0 0 0 2px var(--amberline)}100%{background:transparent;box-shadow:0 0 0 0 transparent}}
+.readouts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.readout{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+.ro-label{font-size:.86rem;color:var(--ink2);line-height:1.3}
+.ro-val{font-size:1.75rem;font-weight:650;font-variant-numeric:tabular-nums;line-height:1.25;margin-top:2px}
+.ro-val .v{white-space:nowrap}
+.readout.long .ro-val{font-size:1.3rem}
+.ro-val .unit{font-size:.95rem;color:var(--ink2);font-weight:500;margin-left:4px}
+.warn{background:var(--amberbg);border:1px solid var(--amberline);color:#5a3100;border-radius:10px;padding:10px 14px}
+.err-box{background:var(--badbg);border:1px solid #f0a8a2;color:#7a1610;border-radius:10px;padding:12px 16px}
+.active-ex{background:#fff;border:1px solid #9db4ef;border-left:4px solid var(--accent);border-radius:10px;padding:12px 16px}
+.active-ex .ae-t{font-weight:700;margin-bottom:4px}
+.active-ex .ae-o{font-family:var(--serif);color:var(--ink2)}
+.views{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:16px}
+.view{margin:0;padding:14px 16px 16px}
+.view.wide{grid-column:1/-1}
+.view h3{font-family:var(--sans);font-size:1rem;font-weight:700}
+.viz{overflow-x:auto;margin-top:8px}
+.viz svg{display:block;font-family:var(--sans);overflow:visible}
+.view figcaption{font-family:var(--serif);font-size:.95rem;color:var(--ink2);margin-top:8px;line-height:1.55}
+.nodata{color:#596274;background:#f3f5f8;border:1px dashed #c9d0db;border-radius:8px;padding:22px 14px;font-size:.9rem;text-align:center}
+svg .tk{font-size:12px;fill:#4a5568}
+svg .gl{stroke:#e5e9f0;stroke-width:1}
+svg .ax{stroke:#7c8798;stroke-width:1.2}
+svg .lbl{font-size:12.5px;fill:#334155;font-weight:600}
+svg .vl{font-size:12px;fill:#1f2937;font-variant-numeric:tabular-nums}
+svg .lg{font-size:12.5px;fill:#334155}
+svg .halo{paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round}
+.pipe{display:flex;flex-wrap:wrap;align-items:stretch;gap:10px 6px;list-style:none;margin:0;padding:0}
+.pipe-item{display:flex;align-items:stretch;gap:6px;flex:1 1 170px;min-width:0}
+.pipe-stage{flex:1 1 auto;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fafbfd;min-width:0}
+.pipe-arrow{align-self:center;color:var(--ink3);font-size:1.4rem;line-height:1}
+.ps-label{font-weight:700;font-size:.9rem}
+.ps-val{font-size:1.05rem;font-variant-numeric:tabular-nums;margin-top:4px;overflow-x:auto}
+.ps-note{font-size:.8rem;color:var(--ink3);margin-top:4px;line-height:1.35}
+table.mini{border-collapse:collapse;font-size:.85rem}
+table.mini td{padding:2px 7px;text-align:right;border:1px solid var(--line2);background:#fff}
+table.dtab{border-collapse:collapse;width:100%;font-size:.92rem}
+.dtab th{text-align:left;font-size:.84rem;color:var(--ink2);border-bottom:2px solid var(--line);padding:6px 10px;white-space:nowrap}
+.dtab td{border-bottom:1px solid var(--line2);padding:6px 10px}
+.dtab td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.dtab tr.hl td{background:#fff3cf}
+.inv{list-style:none;margin:0;padding:0}
+.inv li{display:flex;gap:10px;padding:7px 0;border-top:1px solid var(--line2);align-items:baseline}
+.inv li:first-child{border-top:0}
+.mk{font-weight:800;flex:none;width:1.1em;text-align:center}
+.mk.ok,.ok>.mk{color:var(--ok)}
+.mk.bad,.bad>.mk{color:var(--bad)}
+.emsg{color:var(--bad);font-size:.84rem;display:block;margin-top:2px}
+.sub-h{font-family:var(--sans);font-size:1rem;font-weight:700;margin:0 0 4px}
+details.allv summary{cursor:pointer;font-weight:700}
+.allv-body{margin-top:12px;overflow-x:auto}
+table.kv{border-collapse:collapse;font-size:.88rem;width:100%}
+.kv>tbody>tr>th{text-align:left;vertical-align:top;padding:5px 12px 5px 0;font-family:var(--mono);font-weight:500;color:var(--ink2);white-space:nowrap;width:1%}
+.kv>tbody>tr>td{padding:5px 0;border-bottom:1px solid var(--line2);font-variant-numeric:tabular-nums}
+.pg-foot{display:flex;justify-content:flex-end}
+/* explorations */
+.exs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr));gap:18px}
+.ex{display:flex;flex-direction:column;gap:12px;scroll-margin-top:16px}
+.ex-head{display:flex;gap:12px;align-items:baseline}
+.ex-n{flex:none;width:1.9rem;height:1.9rem;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:inline-flex;align-items:center;justify-content:center;font-size:.95rem;transform:translateY(-2px)}
+.ex dl{margin:0;display:grid;gap:8px}
+.ex dl>div{display:grid;grid-template-columns:5.2em minmax(0,1fr);gap:10px}
+.ex dt{font-weight:700;font-size:.86rem;color:var(--accent2);padding-top:3px}
+.ex dd{margin:0;font-family:var(--serif);line-height:1.6}
+.ex-preset{font-size:.84rem;color:var(--ink3);margin:0}
+.ex-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto}
+.btn.on{background:var(--accent2);border-color:var(--accent2);color:#fff;box-shadow:0 0 0 3px #c7d5fb}
+.ex-check{margin:0;padding:8px 12px;border-radius:8px;font-size:.92rem}
+.ex-check.ok{background:var(--okbg)}
+.ex-check.bad{background:var(--badbg)}
+/* caveat */
+.caveat{background:var(--amberbg);border:1px solid var(--amberline);border-radius:12px;padding:22px 24px}
+.caveat h2{color:var(--amber);font-size:1.3rem;margin-bottom:6px}
+.caveat h3{margin-bottom:8px}
+/* tests */
+.ttab td.mk{font-size:1.1rem}
+.ttab tr.bad td{background:#fff7f6}
+.t-set{font-size:.86rem;color:var(--ink2)}
+.tests-bar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:10px}
+/* grounding */
+.cite{font-family:var(--serif);font-size:1.05rem;margin-bottom:18px}
+.gcol ul{margin:0;padding-left:1.2em;font-family:var(--serif);line-height:1.6}
+.gcol li{margin-bottom:6px}
+.gcol h3{font-family:var(--sans);font-size:1rem;font-weight:700;margin-bottom:10px}
+.gcol.paper{border-top:3px solid var(--ok)}
+.gcol.ours{border-top:3px solid var(--ink3)}
+.notclaimed{margin-top:16px;font-family:var(--serif);color:var(--ink2);border-left:3px solid var(--line);padding-left:14px}
+footer.foot{margin-top:52px;padding:22px 0 40px;border-top:1px solid var(--line);background:#fff;font-size:.9rem;color:var(--ink2)}
+footer summary{cursor:pointer;font-weight:600;color:var(--ink)}
+.rep{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:14px 0}
+.rep div{background:#f6f8fb;border-radius:8px;padding:8px 12px}
+.rep b{display:block;font-size:1.1rem;color:var(--ink);font-variant-numeric:tabular-nums}
+.chk{list-style:none;padding:0;margin:0}
+.chk li{display:flex;gap:8px;padding:4px 0}
+[hidden]{display:none!important}
+@media (max-width:959px){.pg-grid{grid-template-columns:minmax(0,1fr)}.panel{position:static;max-height:none}}
+@media (max-width:640px){.wrap{padding:0 16px}header.hero{padding:28px 0 18px}.card{padding:16px}.sec{padding-top:34px}h2{font-size:1.4rem}ol.steps li{padding:14px}.ex dl>div{grid-template-columns:minmax(0,1fr);gap:0}.eq-display math{font-size:1.25em}.symtab th,.symtab td,.ttab th,.ttab td{padding:8px 10px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.ctl.flash{background:#fff1c2;box-shadow:0 0 0 2px var(--amberline)}}
+</style>
+</head>
+<body>
+<header class="hero" id="top">
+  <div class="wrap">
+    <h1 id="page-title">Interactive explainer</h1>
+    <p class="subtitle" id="page-subtitle" hidden></p>
+    <ul class="chips" id="page-chips" aria-label="About this page"></ul>
+    <nav class="toc" id="toc" aria-label="Sections"></nav>
+    <div id="fatal" class="fatal" hidden></div>
+  </div>
+</header>
+<main>
+  <section id="idea" class="sec"><div class="wrap two">
+    <div class="card" id="idea-card"><h2>The idea</h2><div class="prose" id="idea-body"></div></div>
+    <div class="card" id="why-card"><h2>Why it matters</h2><div class="prose" id="why-body"></div></div>
+  </div></section>
+  <section id="equation" class="sec"><div class="wrap">
+    <h2>The key equation</h2>
+    <div class="eq-display" id="eq-display"></div>
+    <div class="eq-cap prose" id="eq-caption"></div>
+    <div class="tscroll" id="symbols-wrap"><table class="symtab"><thead><tr><th scope="col">Symbol</th><th scope="col">Meaning</th><th scope="col">In the playground</th></tr></thead><tbody id="symbols-body"></tbody></table></div>
+  </div></section>
+  <section id="how" class="sec"><div class="wrap">
+    <h2>How it works</h2>
+    <ol class="steps prose" id="steps-list"></ol>
+  </div></section>
+  <section id="playground" aria-labelledby="pg-h"><div class="wrap">
+    <h2 id="pg-h">Playground</h2>
+    <p class="lead">Move any control: every number, chart and check below is recomputed from the equation immediately.</p>
+    <div class="pg-grid">
+      <aside class="panel" aria-label="Controls">
+        <div class="panel-head"><h3>Controls</h3><button type="button" class="btn ghost sm" id="reset-defaults">Reset to defaults</button></div>
+        <div id="controls"></div>
+      </aside>
+      <div class="stage">
+        <div class="err-box" id="pg-error" role="alert" hidden></div>
+        <div class="active-ex" id="pg-active" hidden></div>
+        <div class="readouts" id="readouts" aria-live="polite"></div>
+        <div class="warn" id="pg-warning" role="status" hidden></div>
+        <div class="views" id="views"></div>
+        <div class="card" id="invariants-card">
+          <h3 class="sub-h">Live checks</h3>
+          <p class="live-note">Conditions that must hold at every setting, re-evaluated each time a control changes.</p>
+          <ul class="inv" id="invariants"></ul>
+        </div>
+        <details class="card allv" id="all-values"><summary>All computed values</summary><div class="allv-body" id="all-values-body"></div></details>
+      </div>
+    </div>
+  </div></section>
+  <section id="explore" class="sec"><div class="wrap">
+    <h2>Guided explorations</h2>
+    <p class="lead">Each exploration sets the playground to a specific case. Predict what will happen, set it up, then compare with the check.</p>
+    <div class="exs" id="explorations"></div>
+  </div></section>
+  <section id="caveat" class="sec"><div class="wrap">
+    <div class="caveat"><h2 id="caveat-kind">Limitation</h2><h3 id="caveat-title"></h3><div class="prose" id="caveat-body"></div></div>
+  </div></section>
+  <section id="checks" class="sec"><div class="wrap">
+    <h2>Built-in checks</h2>
+    <p class="lead">These checks are executable: each one runs this page's compute function at the listed setting in your browser and tests the condition.</p>
+    <div class="tests-bar"><div id="tests-summary"></div><button type="button" class="btn ghost sm" id="rerun-checks">Re-run checks</button></div>
+    <div class="tscroll" style="margin-top:0"><table class="ttab"><thead><tr><th scope="col">Check</th><th scope="col">Result</th><th scope="col">Setting and condition</th></tr></thead><tbody id="tests-body"></tbody></table></div>
+  </div></section>
+  <section id="grounding" class="sec"><div class="wrap">
+    <h2>Source grounding</h2>
+    <p class="cite" id="citation"></p>
+    <div class="two">
+      <div class="card gcol paper"><h3>Supported by the paper</h3><ul id="from-paper"></ul></div>
+      <div class="card gcol ours"><h3>Our simplifications and examples</h3><ul id="simplifications"></ul></div>
+    </div>
+    <div class="notclaimed" id="not-claimed" hidden></div>
+  </div></section>
+</main>
+<footer class="foot" id="generated"><div class="wrap">
+  <details><summary>How this page was generated</summary><div id="report"></div></details>
+</div></footer>
+<noscript><p style="padding:16px">This page needs JavaScript to draw its interactive playground.</p></noscript>
+<script id="page-data" type="application/json">/*__PAGE_JSON__*/</script>
+<script>/*__COMPUTE_JS__*/</script>
+<script>
+(function () {
+"use strict";
+const D = document, $ = id => D.getElementById(id);
+const arr = x => Array.isArray(x) ? x : [];
+const fin = x => typeof x === "number" && isFinite(x);
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => "&#" + c.charCodeAt(0) + ";");
+const msg = e => (e && e.message) ? e.message : String(e);
+const clone = x => { if (x === undefined) return x; try { return structuredClone(x); } catch (e) { return JSON.parse(JSON.stringify(x)); } };
+const RM = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+let PAGE = {}, fatal = "";
+try { PAGE = JSON.parse($("page-data").textContent); } catch (e) { fatal = "The page data could not be read (" + msg(e) + "). Static content is unavailable."; }
+if (!PAGE || typeof PAGE !== "object") PAGE = {};
+const computeFn = (typeof compute === "function") ? compute : null;
+
+/* ---------- number formatting ---------- */
+const SUP = {"0":"⁰","1":"¹","2":"²","3":"³","4":"⁴","5":"⁵","6":"⁶","7":"⁷","8":"⁸","9":"⁹","-":"⁻","+":""};
+const SUBD = "₀₁₂₃₄₅₆₇₈₉";
+const subs = n => String(n).replace(/\d/g, c => SUBD[+c]);
+function fmt(x, d) {
+  if (x === null || x === undefined) return "—";
+  if (typeof x === "boolean") return x ? "true" : "false";
+  if (typeof x === "string") return x;
+  if (Array.isArray(x)) return "[" + x.map(y => fmt(y, d)).join(", ") + "]";
+  if (typeof x !== "number") return String(x);
+  if (!isFinite(x)) return "undefined";
+  d = (typeof d === "number" && d >= 0) ? Math.min(10, Math.round(d)) : 3;
+  const a = Math.abs(x);
+  let s;
+  if (Number.isInteger(x) && a < 1e15) s = String(x);
+  else if (a !== 0 && (a < 1e-3 || a >= 1e6)) {
+    const p = x.toExponential(Math.max(1, d - 1)).split("e");
+    s = p[0] + "×10" + p[1].replace(/[-+0-9]/g, c => SUP[c]);
+  } else s = x.toFixed(d);
+  if (/^-0(\.0+)?$/.test(s)) s = s.slice(1);
+  return s.replace(/-/g, "−");
+}
+function fmtH(x, d) {
+  if (Array.isArray(x)) return "[" + x.map(y => fmtH(y, d)).join(", ") + "]";
+  if (typeof x === "number" && !isFinite(x)) return '<span class="undef" title="' + (isNaN(x) ? "NaN" : (x > 0 ? "+∞" : "−∞")) + '">undefined</span>';
+  return esc(fmt(x, d));
+}
+/* compact form for settings: up to 4 decimals, trailing zeros dropped */
+function fmtC(x) {
+  if (Array.isArray(x)) return "[" + x.map(fmtC).join(", ") + "]";
+  const s = fmt(x, 4);
+  return typeof x === "number" && /^[−\d.]+$/.test(s) && s.indexOf(".") >= 0 ? s.replace(/0+$/, "").replace(/\.$/, "") : s;
+}
+const mark = ok => ok ? '<span class="mk ok" role="img" aria-label="pass">✓</span>' : '<span class="mk bad" role="img" aria-label="fail">✗</span>';
+
+/* ---------- expression evaluation ---------- */
+const fcache = new Map();
+function evalExpr(expr, out, s, prev) {
+  if (expr == null || String(expr).trim() === "") return { ok: false, err: "no condition given" };
+  try {
+    let f = fcache.get(expr);
+    if (!f) { f = new Function("out", "s", "prev", '"use strict"; return (' + expr + ");"); fcache.set(expr, f); }
+    const r = f(out, s, prev || {});
+    return r ? { ok: true } : { ok: false, err: "condition is false" };
+  } catch (e) { return { ok: false, err: msg(e) }; }
+}
+
+/* ---------- controls & state ---------- */
+const CTL = arr(PAGE.controls).filter(c => c && c.id != null && typeof c.type === "string");
+const CMAP = {}; CTL.forEach(c => { CMAP[c.id] = c; });
+const num = (v, fb) => { const x = typeof v === "number" ? v : parseFloat(v); return isFinite(x) ? x : fb; };
+const clampC = (c, v) => { if (fin(c.step) && Number.isInteger(c.step) && c.step >= 1) { const b = fin(c.min) ? c.min : 0; v = b + Math.round((v - b) / c.step) * c.step; } if (fin(c.min) && v < c.min) v = c.min; if (fin(c.max) && v > c.max) v = c.max; return v; };
+const lowC = c => fin(c.min) ? c.min : 0;
+function opts(c) { return arr(c.options).map(o => (o && typeof o === "object") ? { value: o.value, label: o.label != null ? String(o.label) : String(o.value) } : { value: o, label: String(o) }); }
+function norm(c, v) {
+  switch (c.type) {
+    case "slider": case "number": return clampC(c, num(v, lowC(c)));
+    case "toggle": return v === true || v === "true" || v === 1 || v === "on";
+    case "select": { const o = opts(c); const h = o.find(x => x.value === v) || o.find(x => String(x.value) === String(v)); return h ? h.value : (o[0] ? o[0].value : v); }
+    case "vector": { const a = arr(v).map(x => clampC(c, num(x, lowC(c)))); return a; }
+    case "matrix": {
+      const m = arr(v).map(r => arr(r).map(x => clampC(c, num(x, 0))));
+      let nc = 0; m.forEach(r => { nc = Math.max(nc, r.length); });
+      m.forEach(r => { while (r.length < nc) r.push(clampC(c, 0)); });
+      return m;
+    }
+  }
+  return clone(v);
+}
+const DEF = {}; CTL.forEach(c => { DEF[c.id] = norm(c, c.default); });
+let state = clone(DEF);
+let OUT = {}, OUTOK = false;
+const WIDGETS = {};
+
+function attrs(c) { return (fin(c.min) ? ' min="' + c.min + '"' : "") + (fin(c.max) ? ' max="' + c.max + '"' : "") + ' step="' + (fin(c.step) && c.step > 0 ? c.step : "any") + '"'; }
+const helpHTML = c => c.help ? '<div class="help" id="help-' + esc(c.id) + '">' + esc(c.help) + "</div>" : "";
+const descBy = c => c.help ? ' aria-describedby="help-' + esc(c.id) + '"' : "";
+function itemLabel(c, i) {
+  const L = arr(c.item_labels);
+  if (L[i] != null && L[i] !== "") return String(L[i]);
+  return (/^[A-Za-z]{1,2}$/.test(String(c.id)) ? c.id : "x") + subs(i + 1);
+}
+function axLabel(L, i) { L = arr(L); return (L[i] != null && L[i] !== "") ? String(L[i]) : String(i + 1); }
+
+function makeWidget(c, w) {
+  const id = "ctl-" + c.id, eid = esc(id), lbl = esc(c.label != null ? c.label : c.id);
+  const t = c.type;
+  if (t === "slider") {
+    const mn = fin(c.min) ? c.min : 0, mx = fin(c.max) ? c.max : 1;
+    const st = fin(c.step) && c.step > 0 ? c.step : (mx - mn) / 100 || "any";
+    const cc = Object.assign({}, c, { min: mn, max: mx, step: st });
+    w.innerHTML = '<div class="row"><label class="main" for="' + eid + '">' + lbl + '</label><input type="number" class="num" id="' + eid + '-num"' + attrs(cc) + ' aria-label="' + lbl + ' (exact value)"></div>' +
+      '<input type="range" id="' + eid + '"' + attrs(cc) + descBy(c) + '><div class="minmax" aria-hidden="true"><span>' + esc(fmt(mn)) + "</span><span>" + esc(fmt(mx)) + "</span></div>" + helpHTML(c);
+    const r = w.querySelector('input[type=range]'), nb = w.querySelector('input[type=number]');
+    r.addEventListener("input", () => { const v = clampC(cc, +r.value); state[c.id] = v; nb.value = v; update(); });
+    nb.addEventListener("input", () => { const v = nb.valueAsNumber; if (!isFinite(v)) return; const cv = clampC(cc, v); state[c.id] = cv; r.value = cv; update(); });
+    nb.addEventListener("change", () => { nb.value = state[c.id]; });
+    return { sync() { r.value = state[c.id]; nb.value = state[c.id]; } };
+  }
+  if (t === "number") {
+    w.innerHTML = '<div class="row"><label class="main" for="' + eid + '">' + lbl + '</label><input type="number" class="num" id="' + eid + '"' + attrs(c) + descBy(c) + "></div>" + helpHTML(c);
+    const nb = w.querySelector("input");
+    nb.addEventListener("input", () => { const v = nb.valueAsNumber; if (!isFinite(v)) return; state[c.id] = clampC(c, v); update(); });
+    nb.addEventListener("change", () => { nb.value = state[c.id]; });
+    return { sync() { nb.value = state[c.id]; } };
+  }
+  if (t === "toggle") {
+    w.innerHTML = '<div class="row"><label class="main" for="' + eid + '">' + lbl + '</label><span class="switch"><input type="checkbox" role="switch" id="' + eid + '"' + descBy(c) + '><span class="track" aria-hidden="true"></span><span class="st" aria-hidden="true">off</span></span></div>' + helpHTML(c);
+    const cb = w.querySelector("input"), st = w.querySelector(".st");
+    cb.addEventListener("change", () => { state[c.id] = cb.checked; st.textContent = cb.checked ? "on" : "off"; update(); });
+    return { sync() { cb.checked = !!state[c.id]; st.textContent = cb.checked ? "on" : "off"; } };
+  }
+  if (t === "select") {
+    const O = opts(c);
+    w.innerHTML = '<div class="row"><label class="main" for="' + eid + '">' + lbl + '</label></div><select id="' + eid + '"' + descBy(c) + ">" + O.map(o => '<option value="' + esc(o.value) + '">' + esc(o.label) + "</option>").join("") + "</select>" + helpHTML(c);
+    const sel = w.querySelector("select");
+    sel.addEventListener("change", () => { const o = O[sel.selectedIndex]; if (o) { state[c.id] = o.value; update(); } });
+    return { sync() { const i = O.findIndex(o => o.value === state[c.id] || String(o.value) === String(state[c.id])); sel.selectedIndex = Math.max(0, i); } };
+  }
+  if (t === "vector") {
+    const n0 = arr(state[c.id]).length;
+    const minL = Math.min(fin(c.min_len) ? c.min_len : n0, n0), maxL = Math.max(fin(c.max_len) ? c.max_len : n0, n0);
+    const mn = fin(c.min) ? c.min : 0, mx = fin(c.max) ? c.max : 1;
+    const cc = Object.assign({}, c, { min: mn, max: mx, step: fin(c.step) && c.step > 0 ? c.step : (mx - mn) / 100 || "any" });
+    const build = () => {
+      const v = arr(state[c.id]);
+      let h = '<div class="row"><label class="main" for="' + eid + '-0">' + lbl + '</label><span class="dim" aria-live="polite">' + v.length + (v.length === 1 ? " entry" : " entries") + "</span></div>";
+      v.forEach((x, i) => {
+        const il = esc(itemLabel(c, i));
+        h += '<div class="vrow"><label for="' + eid + "-" + i + '">' + il + '</label><input type="range" id="' + eid + "-" + i + '" data-i="' + i + '"' + attrs(cc) + ' value="' + x + '"><input type="number" class="num" id="' + eid + "-" + i + '-num" data-i="' + i + '"' + attrs(cc) + ' value="' + x + '" aria-label="' + il + ' (exact value)"></div>';
+      });
+      if (minL < maxL) h += '<div class="btns"><button type="button" class="btn ghost sm" id="' + eid + '-add"' + (v.length >= maxL ? " disabled" : "") + '>+ Add entry</button><button type="button" class="btn ghost sm" id="' + eid + '-remove"' + (v.length <= minL ? " disabled" : "") + ">− Remove last</button></div>";
+      w.innerHTML = h + helpHTML(c);
+    };
+    w.addEventListener("input", e => {
+      const el = e.target; if (el.dataset.i == null) return;
+      const i = +el.dataset.i, v = el.type === "range" ? +el.value : el.valueAsNumber;
+      if (!isFinite(v)) return;
+      const cv = clampC(cc, v); state[c.id][i] = cv;
+      const other = el.parentNode.querySelector(el.type === "range" ? "input[type=number]" : "input[type=range]");
+      if (other) other.value = cv;
+      update();
+    });
+    w.addEventListener("change", e => { const el = e.target; if (el.type === "number" && el.dataset.i != null) el.value = state[c.id][+el.dataset.i]; });
+    w.addEventListener("click", e => {
+      const b = e.target.closest("button"); if (!b) return;
+      const v = state[c.id];
+      if (b.id === id + "-add" && v.length < maxL) v.push(v.length ? v[v.length - 1] : clampC(cc, mn));
+      else if (b.id === id + "-remove" && v.length > minL) v.pop();
+      else return;
+      build(); update();
+      const nb = $(b.id); if (nb && !nb.disabled) nb.focus();
+    });
+    build();
+    return { sync: build };
+  }
+  if (t === "matrix") {
+    const m0 = arr(state[c.id]), r0 = m0.length, c0 = r0 ? m0[0].length : 0;
+    const rs = !!c.resizable;
+    const minR = rs ? Math.min(fin(c.min_rows) ? c.min_rows : 1, r0) : r0, maxR = rs ? Math.max(fin(c.max_rows) ? c.max_rows : 8, r0) : r0;
+    const minC = rs ? Math.min(fin(c.min_cols) ? c.min_cols : 1, c0) : c0, maxC = rs ? Math.max(fin(c.max_cols) ? c.max_cols : 8, c0) : c0;
+    const build = () => {
+      const m = arr(state[c.id]), R = m.length, C = R ? m[0].length : 0;
+      let h = '<div class="row"><label class="main" for="' + eid + '-0-0">' + lbl + '</label><span class="dim" aria-live="polite">' + R + " × " + C + "</span></div>";
+      h += '<div class="mwrap"><table class="mat" role="presentation"><thead><tr><th></th>';
+      for (let j = 0; j < C; j++) h += '<th scope="col">' + esc(axLabel(c.col_labels, j)) + "</th>";
+      h += "</tr></thead><tbody>";
+      m.forEach((row, i) => {
+        const rl = esc(axLabel(c.row_labels, i));
+        h += '<tr><th scope="row">' + rl + "</th>";
+        row.forEach((x, j) => { h += '<td><input type="number" class="cell" id="' + eid + "-" + i + "-" + j + '" data-i="' + i + '" data-j="' + j + '"' + attrs(c) + ' value="' + x + '" aria-label="' + lbl + ", row " + rl + ", column " + esc(axLabel(c.col_labels, j)) + '"></td>'; });
+        h += "</tr>";
+      });
+      h += "</tbody></table></div>";
+      if (rs && (minR < maxR || minC < maxC)) {
+        const B = (s, txt, dis) => '<button type="button" class="btn ghost sm" id="' + eid + "-" + s + '"' + (dis ? " disabled" : "") + ">" + txt + "</button>";
+        h += '<div class="btns">' + (minR < maxR ? B("addrow", "+ Row", R >= maxR) + B("removerow", "− Row", R <= minR) : "") + (minC < maxC ? B("addcol", "+ Column", C >= maxC) + B("removecol", "− Column", C <= minC) : "") + "</div>";
+      }
+      w.innerHTML = h + helpHTML(c);
+    };
+    w.addEventListener("input", e => {
+      const el = e.target; if (el.dataset.j == null) return;
+      const v = el.valueAsNumber; if (!isFinite(v)) return;
+      state[c.id][+el.dataset.i][+el.dataset.j] = clampC(c, v); update();
+    });
+    w.addEventListener("change", e => { const el = e.target; if (el.dataset.j != null) el.value = state[c.id][+el.dataset.i][+el.dataset.j]; });
+    w.addEventListener("click", e => {
+      const b = e.target.closest("button"); if (!b) return;
+      const m = state[c.id], R = m.length, C = R ? m[0].length : 0, z = clampC(c, 0), act = b.id.slice(id.length + 1);
+      if (act === "addrow" && R < maxR) m.push(new Array(Math.max(C, 1)).fill(z));
+      else if (act === "removerow" && R > minR) m.pop();
+      else if (act === "addcol" && C < maxC) m.forEach(r => r.push(z));
+      else if (act === "removecol" && C > minC) m.forEach(r => r.pop());
+      else return;
+      build(); update();
+      const nb = $(b.id); if (nb && !nb.disabled) nb.focus();
+    });
+    build();
+    return { sync: build };
+  }
+  w.innerHTML = '<div class="row"><span class="main">' + lbl + '</span></div><div class="help">Unsupported control type "' + esc(t) + '".</div>';
+  return { sync() {} };
+}
+function buildControls() {
+  const box = $("controls");
+  if (!CTL.length) { box.innerHTML = '<p class="muted" style="margin:10px 0 0">This page has no adjustable controls.</p>'; return; }
+  CTL.forEach(c => {
+    const w = D.createElement("div");
+    w.className = "ctl ctl-" + c.type; w.id = "ctlwrap-" + c.id;
+    box.appendChild(w);
+    try { WIDGETS[c.id] = makeWidget(c, w); WIDGETS[c.id].sync(); }
+    catch (e) { w.innerHTML = '<div class="help">Control "' + esc(c.id) + '" could not be built: ' + esc(msg(e)) + "</div>"; WIDGETS[c.id] = { sync() {} }; }
+  });
+}
+function syncAll() { CTL.forEach(c => { try { WIDGETS[c.id] && WIDGETS[c.id].sync(); } catch (e) { /* keep going */ } }); }
+
+/* ---------- SVG helpers ---------- */
+const CAT = ["#2563eb", "#ea580c", "#16a34a", "#9333ea", "#dc2626", "#0d9488", "#ca8a04", "#db2777"];
+const SEQ = ["#eef4fc", "#a9c8f3", "#4a80dc", "#1e3a8a"];
+const DIV = ["#1d4ed8", "#8fb0ef", "#f7f7f7", "#f19c94", "#b42318"];
+const r1 = v => Math.round(v * 10) / 10;
+const tw = (s, f) => String(s).length * (f || 12) * 0.58;
+function T(x, y, s, a) { return '<text x="' + r1(x) + '" y="' + r1(y) + '"' + (a ? " " + a : "") + ">" + esc(s) + "</text>"; }
+function ext(a) { let lo = Infinity, hi = -Infinity; for (const v of a) { if (v < lo) lo = v; if (v > hi) hi = v; } return [lo, hi]; }
+function niceStep(range, n) {
+  if (!(range > 0) || !isFinite(range)) return 1;
+  const raw = range / Math.max(1, n), p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p;
+  return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p;
+}
+function niceDomain(lo, hi, n) {
+  if (!fin(lo) || !fin(hi)) { lo = 0; hi = 1; }
+  if (lo === hi) { const p = lo === 0 ? 1 : Math.abs(lo) * 0.5; lo -= p; hi += p; }
+  const st = niceStep(hi - lo, n);
+  return { lo: Math.floor(lo / st + 1e-9) * st, hi: Math.ceil(hi / st - 1e-9) * st, step: st };
+}
+function ticks(lo, hi, st) { const o = []; const k0 = Math.ceil(lo / st - 1e-9); for (let k = k0; k * st <= hi + st * 1e-9 && o.length < 60; k++) o.push(+(k * st).toPrecision(12)); return o; }
+function tickFmt(v, st) {
+  if (Math.abs(v) < st * 1e-6) return "0";
+  const a = Math.abs(v);
+  if (a >= 1e6 || a < 1e-3) return fmt(v, 2);
+  return v.toFixed(Math.max(0, Math.min(10, -Math.floor(Math.log10(st) + 1e-9)))).replace("-", "−");
+}
+const lin = (d0, d1, r0, r1_) => v => r0 + (d1 === d0 ? 0.5 : (v - d0) / (d1 - d0)) * (r1_ - r0);
+function hx(c) { c = c.replace("#", ""); return [0, 2, 4].map(i => parseInt(c.substr(i, 2), 16)); }
+function mix(a, b, t) { const A = hx(a), B = hx(b); return "rgb(" + A.map((v, i) => Math.round(v + (B[i] - v) * t)).join(",") + ")"; }
+function ramp(st, t) { t = clamp(fin(t) ? t : 0, 0, 1); const n = st.length - 1, i = Math.min(n - 1, Math.floor(t * n)); return mix(st[i], st[i + 1], t * n - i); }
+function lum(c) { const m = String(c).match(/\d+/g).slice(0, 3).map(v => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }); return 0.2126 * m[0] + 0.7152 * m[1] + 0.0722 * m[2]; }
+const svgOpen = (W, H, label) => '<svg viewBox="0 0 ' + Math.round(W) + " " + Math.round(H) + '" width="100%" role="img" aria-label="' + esc(label) + '" xmlns="http://www.w3.org/2000/svg">';
+function legend(items, W, y0) {
+  let x = 4, y = y0, s = "";
+  items.forEach(it => {
+    const sw = it.dash ? 24 : 12, w = sw + 10 + tw(it.name, 12.5) + 14;
+    if (x + w > W && x > 4) { x = 4; y += 18; }
+    s += (it.dash ? '<line x1="' + r1(x) + '" x2="' + r1(x + sw) + '" y1="' + (y - 4) + '" y2="' + (y - 4) + '" stroke="' + it.color + '" stroke-width="2.4" stroke-dasharray="6 3"/>' : '<rect x="' + r1(x) + '" y="' + (y - 10) + '" width="12" height="12" rx="2" fill="' + it.color + '"/>') + T(x + sw + 5, y, it.name, 'class="lg"' + (it.ref ? ' style="fill:' + it.color + '"' : ""));
+    x += w;
+  });
+  return { svg: s, h: y - y0 + 22 };
+}
+/* log axes: decade ticks, plain labels between 0.001 and 1e4, 10ⁿ otherwise */
+function logLabel(e) { return e >= -3 && e <= 4 ? (e < 0 ? Math.pow(10, e).toFixed(-e) : String(Math.pow(10, e))) : "10" + String(e).replace(/[-0-9]/g, c => SUP[c]); }
+function logDom(lo, hi, flo, fhi) {
+  let e0 = Math.floor(Math.log10(lo) + 1e-9), e1 = Math.ceil(Math.log10(hi) - 1e-9);
+  if (e1 <= e0) e1 = e0 + 1;
+  const a = fin(flo) && flo > 0 ? flo : Math.pow(10, e0), b = fin(fhi) && fhi > a ? fhi : Math.max(Math.pow(10, e1), a * 10);
+  return { lo: a, hi: b, log: true };
+}
+function axTicks(dom) {
+  if (!dom.log) return ticks(dom.lo, dom.hi, dom.step).map(t => ({ v: t, label: tickFmt(t, dom.step) }));
+  const e0 = Math.ceil(Math.log10(dom.lo) - 1e-9), e1 = Math.floor(Math.log10(dom.hi) + 1e-9), nd = e1 - e0, kk = Math.max(1, Math.ceil(nd / 7)), o = [];
+  for (let e = Math.floor(Math.log10(dom.lo) + 1e-9); e <= e1 && o.length < 200; e++) {
+    const p = Math.pow(10, e);
+    if (e >= e0 && (e - e0) % kk === 0) o.push({ v: p, label: logLabel(e) });
+    if (nd <= 4) for (let m = 2; m < 10; m++) { const v = m * p; if (v > dom.lo && v < dom.hi) o.push({ v, label: "", minor: true }); }
+  }
+  return o;
+}
+function scale(dom, r0, r1_) {
+  if (!dom.log) return lin(dom.lo, dom.hi, r0, r1_);
+  const a = Math.log10(dom.lo), b = Math.log10(dom.hi);
+  return v => v > 0 ? r0 + (Math.log10(v) - a) / (b - a) * (r1_ - r0) : NaN;
+}
+function yAxis(dom, Y, L, R) {
+  let s = "";
+  axTicks(dom).forEach(t => { const y = Y(t.v); if (!isFinite(y)) return; s += '<line class="gl" x1="' + L + '" x2="' + R + '" y1="' + r1(y) + '" y2="' + r1(y) + '"' + (t.minor ? ' style="stroke:#f1f3f7"' : "") + "/>" + (t.label ? T(L - 6, y + 4, t.label, 'class="tk" text-anchor="end"') : ""); });
+  return s;
+}
+const axTitleY = (s, x, y) => s ? '<text class="lbl" text-anchor="middle" transform="translate(' + r1(x) + "," + r1(y) + ') rotate(-90)">' + esc(s) + "</text>" : "";
+function ensureDomain(d, vals, extra) {
+  let [lo, hi] = vals.length ? ext(vals) : [0, 1];
+  extra.forEach(v => { if (fin(v)) { lo = Math.min(lo, v); hi = Math.max(hi, v); } });
+  return [lo, hi];
+}
+const NONPOS = "non-positive values not shown";
+
+/* ---------- views ---------- */
+function vBars(d, W, k, title) {
+  const labels = arr(d.labels).map(x => String(x));
+  const S = Array.isArray(d.series) ? d.series.filter(s => s && Array.isArray(s.values)).map((s, i) => ({ name: s.name != null ? String(s.name) : "Series " + (i + 1), values: s.values }))
+    : (Array.isArray(d.values) ? [{ name: "", values: d.values }] : []);
+  if (!S.length) throw new Error("bars need values[] or series[]");
+  let n = labels.length; S.forEach(s => { n = Math.max(n, s.values.length); });
+  if (!n) throw new Error("there are no bars to draw");
+  const multi = S.length > 1, dg = d.digits, hl = new Set(arr(d.highlight));
+  const ref = d.reference && fin(d.reference.value) ? d.reference : null;
+  const vals = []; S.forEach(s => s.values.forEach(x => { if (fin(x)) vals.push(x); }));
+  const fl = fin(d.ymin), fh = fin(d.ymax);
+  let autoLog = false;
+  if (d.yscale == null && !fl && !fh && vals.length > 1 && (!ref || ref.value > 0)) { const [a, b] = ext(vals); autoLog = a > 0 && b / a > 1e4; }
+  const logY = d.yscale === "log" || autoLog;
+  let dom, skipped = 0;
+  if (logY) {
+    const pv = vals.filter(v => v > 0); skipped = vals.length - pv.length;
+    if (ref && ref.value > 0) pv.push(ref.value);
+    if (!pv.length) throw new Error("no positive values to show on a log scale");
+    const [a, b] = ext(pv); dom = logDom(a / 2, b, d.ymin, d.ymax);  // bars need room below the smallest value
+  } else {
+    let [lo, hi] = ensureDomain(d, vals, [0, ref && ref.value]);
+    const span = (hi - lo) || 1;
+    let maxLab = 0; S.forEach(se => se.values.forEach(v => { if (fin(v)) maxLab = Math.max(maxLab, tw(fmt(v, dg), 11.5)); }));
+    const bwEst = Math.min((W - 70) / n * (multi ? 0.8 : 0.66), (multi ? 56 : 84) * S.length) / S.length;
+    const padF = bwEst < maxLab + 2 && bwEst >= 11 ? Math.min(0.45, (maxLab + 10) / 220) : 0.1;
+    if (!fh && hi > 0) hi += span * padF; if (!fl && lo < 0) lo -= span * padF;
+    dom = niceDomain(lo, hi, 5);
+    if (fl || fh) { if (fl) dom.lo = d.ymin; if (fh) dom.hi = d.ymax; if (dom.hi <= dom.lo) dom.hi = dom.lo + 1; dom.step = niceStep(dom.hi - dom.lo, 5); }
+  }
+  const ylab = autoLog ? (d.ylabel ? d.ylabel + " (log scale)" : "log scale") : d.ylabel;
+  const tl = axTicks(dom).map(t => t.label);
+  const L = 12 + Math.max(10, ...tl.map(s => tw(s))) + (ylab ? 22 : 0), Rm = 10;
+  let refTxt = "";
+  if (ref) { const rl = String(ref.label || "reference"); refTxt = /=/.test(rl) && /\d/.test(rl.split("=").pop()) ? rl : rl + " = " + fmt(ref.value, dg); }
+  const items = multi ? S.map((s, i) => ({ name: s.name, color: CAT[i % 8] })) : [];
+  if (ref) items.push({ name: refTxt, color: "#b42318", dash: true, ref: true });
+  const lg = items.length ? legend(items, W - 8, 14) : { svg: "", h: 0 };
+  const top = 18 + lg.h, pw = W - L - Rm, slot = pw / n;
+  let lab = Array.from({ length: n }, (_, i) => labels[i] != null ? labels[i] : String(i + 1));
+  const rot = Math.max(...lab.map(s => tw(s))) > slot - 6;
+  if (rot) lab = lab.map(s => s.length > 18 ? s.slice(0, 17) + "…" : s);
+  const rang = slot < 24 ? 60 : 35, rotH = rot ? Math.max(...lab.map(s => tw(s))) * Math.sin(rang * Math.PI / 180) + 12 : 0;
+  const H = Math.round(clamp(W * 0.56, 260, 330) + rotH + lg.h);
+  const B = 28 + rotH + (d.xlabel ? 20 : 0);
+  const Y = scale(dom, H - B, top), y0 = logY ? H - B : Y(clamp(0, dom.lo, dom.hi));
+  let s = svgOpen(W, H, title) + lg.svg + yAxis(dom, Y, L, W - Rm);
+  const gw = Math.min(slot * (multi ? 0.8 : 0.66), (multi ? 56 : 84) * S.length), bw = gw / S.length;
+  let bars = "", vl = "";
+  for (let i = 0; i < n; i++) {
+    const gx = L + i * slot + (slot - gw) / 2;
+    if (multi && hl.has(i)) s += '<rect x="' + r1(L + i * slot + 1) + '" y="' + top + '" width="' + r1(slot - 2) + '" height="' + r1(H - B - top) + '" fill="#fde68a" opacity=".45"/>';
+    S.forEach((se, j) => {
+      const v = se.values[i], x = gx + j * bw, cx = x + bw / 2;
+      if (!fin(v)) { if (v != null) vl += T(cx, y0 - 5, "undefined", 'text-anchor="middle" font-size="11" fill="#b42318"'); return; }
+      if (logY && v <= 0) return;
+      const yv = Y(clamp(v, dom.lo, dom.hi));
+      const col = multi ? CAT[j % 8] : (hl.size ? (hl.has(i) ? "#1e3a8a" : "#93b4ee") : "#2563eb");
+      bars += '<rect x="' + r1(x + (multi ? 0.5 : 0)) + '" y="' + r1(Math.min(yv, y0)) + '" width="' + r1(Math.max(1, bw - (multi ? 1 : 0))) + '" height="' + r1(Math.max(Math.abs(y0 - yv), v === 0 ? 0 : 1)) + '" fill="' + col + '"><title>' + esc(lab[i] + (multi ? " (" + se.name + ")" : "") + ": " + fmt(v, dg)) + "</title></rect>";
+      const txt = fmt(v, dg), wt = tw(txt, 11.5);
+      if (bw >= wt + 2) vl += T(cx, v >= 0 ? Math.min(yv, y0) - 5 : Math.max(yv, y0) + 14, txt, 'text-anchor="middle" class="vl halo"' + (hl.has(i) && !multi ? ' font-weight="700"' : ""));
+      else if (bw >= 11) { const yy = v >= 0 ? Math.min(yv, y0) - 5 : Math.max(yv, y0) + 5; vl += '<text class="vl halo" font-size="11" text-anchor="' + (v >= 0 ? "start" : "end") + '" transform="translate(' + r1(cx + 4) + "," + r1(yy) + ') rotate(-90)">' + esc(txt) + "</text>"; }
+    });
+    const lx = L + i * slot + slot / 2, ly = H - B + 16;
+    if (rot && slot < 15 && i % Math.ceil(15 / slot) && !hl.has(i)) continue;
+    s += rot ? '<text class="tk" text-anchor="end" transform="translate(' + r1(lx + 3) + "," + r1(ly - 4) + ') rotate(-' + rang + ')">' + esc(lab[i]) + "</text>" : T(lx, ly, lab[i], 'class="tk" text-anchor="middle"' + (hl.has(i) ? ' font-weight="700" fill="#1e3a8a"' : ""));
+  }
+  s += bars + '<line class="ax" x1="' + L + '" x2="' + (W - Rm) + '" y1="' + r1(y0) + '" y2="' + r1(y0) + '"/>';
+  if (ref) { const yr = Y(clamp(ref.value, dom.lo, dom.hi)); if (isFinite(yr)) s += '<line x1="' + L + '" x2="' + (W - Rm) + '" y1="' + r1(yr) + '" y2="' + r1(yr) + '" stroke="#b42318" stroke-width="1.8" stroke-dasharray="6 3"><title>' + esc(refTxt) + "</title></line>"; }
+  if (skipped) s += T(W - Rm, top - 5, NONPOS, 'text-anchor="end" font-size="11" fill="#667185"');
+  s += vl;
+  if (d.xlabel) s += T(L + pw / 2, H - 6, d.xlabel, 'class="lbl" text-anchor="middle"');
+  s += axTitleY(ylab, 13, top + (H - B - top) / 2);
+  return s + "</svg>";
+}
+
+function vLine(d, W, k, title) {
+  const xs = arr(d.x), S = arr(d.series).filter(s => s && Array.isArray(s.y));
+  if (!xs.length || !S.length) throw new Error("line needs x[] and series[].y");
+  const logX = d.xscale === "log", okX = x => fin(x) && (!logX || x > 0);
+  const mk0 = arr(d.markers).filter(m => m && fin(m.x) && fin(m.y));
+  const hl0 = d.hline && fin(d.hline.y) ? d.hline : null, vl0 = d.vline && fin(d.vline.x) ? d.vline : null;
+  const yAll = [];
+  S.forEach(s => xs.forEach((x, i) => { const y = s.y[i]; if (okX(x) && fin(y)) yAll.push(y); }));
+  mk0.forEach(m => { if (okX(m.x)) yAll.push(m.y); }); if (hl0) yAll.push(hl0.y);
+  let autoLog = false;
+  if (d.yscale == null && !fin(d.ymin) && !fin(d.ymax) && yAll.length > 1) { const [a, b] = ext(yAll); autoLog = a > 0 && b / a > 1e4; }
+  const logY = d.yscale === "log" || autoLog, okY = y => fin(y) && (!logY || y > 0);
+  let skipped = 0;
+  const fx = [], fy = [];
+  S.forEach(s => xs.forEach((x, i) => { const y = s.y[i]; if (fin(x) && fin(y)) { if (okX(x) && okY(y)) { fx.push(x); fy.push(y); } else skipped++; } }));
+  const mk = mk0.filter(m => okX(m.x) && okY(m.y));
+  mk.forEach(m => { fx.push(m.x); fy.push(m.y); });
+  const hl = hl0 && okY(hl0.y) ? hl0 : null, vl = vl0 && okX(vl0.x) ? vl0 : null;
+  if (hl) fy.push(hl.y); if (vl) fx.push(vl.x);
+  if (!fx.length) throw new Error(logX || logY ? "no positive values to show on a log scale" : "no finite points to plot");
+  let [x0, x1] = ext(fx), xdom;
+  if (fin(d.xmin) && (!logX || d.xmin > 0)) x0 = d.xmin; if (fin(d.xmax)) x1 = d.xmax;
+  if (logX) {
+    if (!(x1 > x0)) x1 = x0 * 10;
+    xdom = { lo: x0, hi: x1, log: true };
+    if (Math.floor(Math.log10(x1) + 1e-9) - Math.ceil(Math.log10(x0) - 1e-9) < 1) xdom = logDom(x0, x1);
+  } else { if (!(x1 > x0)) { x0 -= 0.5; x1 = x0 + 1; } xdom = { lo: x0, hi: x1 }; }
+  let [ylo, yhi] = ext(fy), dom;
+  if (logY) dom = logDom(ylo, yhi, d.ymin, d.ymax);
+  else if (fin(d.ymin) && fin(d.ymax) && d.ymax > d.ymin) dom = { lo: d.ymin, hi: d.ymax, step: niceStep(d.ymax - d.ymin, 5) };
+  else {
+    const pad = (yhi - ylo) * 0.06 || Math.abs(yhi) * 0.1 || 1;
+    dom = niceDomain(fin(d.ymin) ? d.ymin : (ylo >= 0 && ylo - pad < 0 ? 0 : ylo - pad), fin(d.ymax) ? d.ymax : yhi + pad, 5);
+    if (fin(d.ymin)) dom.lo = d.ymin; if (fin(d.ymax)) dom.hi = d.ymax;
+  }
+  const ylab = autoLog ? (d.ylabel ? d.ylabel + " (log scale)" : "log scale") : d.ylabel;
+  const tl = axTicks(dom).map(t => t.label);
+  const L = 12 + Math.max(10, ...tl.map(s => tw(s))) + (ylab ? 22 : 0), Rm = 16;
+  const lg = S.length > 1 ? legend(S.map((s, i) => ({ name: s.name != null ? String(s.name) : "Series " + (i + 1), color: CAT[i % 8], dash: !!s.dash })), W - 8, 14) : { svg: "", h: 0 };
+  const top = 16 + lg.h, H = Math.round(clamp(W * 0.52, 250, 340) + lg.h), B = 30 + (d.xlabel ? 20 : 0), pw = W - L - Rm;
+  if (!xdom.log) xdom.step = niceStep(x1 - x0, Math.max(3, Math.floor(pw / 85)));
+  const X = scale(xdom, L, W - Rm), Y = scale(dom, H - B, top);
+  let s = svgOpen(W, H, title) + lg.svg + '<defs><clipPath id="lc' + k + '"><rect x="' + L + '" y="' + top + '" width="' + r1(pw) + '" height="' + r1(H - B - top) + '"/></clipPath></defs>' + yAxis(dom, Y, L, W - Rm);
+  axTicks(xdom).forEach(t => { const x = X(t.v); if (!isFinite(x) || x < L - 0.5 || x > W - Rm + 0.5) return; s += '<line class="gl" x1="' + r1(x) + '" x2="' + r1(x) + '" y1="' + top + '" y2="' + (H - B) + '"' + (t.minor ? ' style="stroke:#f1f3f7"' : "") + "/>" + (t.label ? T(x, H - B + 17, t.label, 'class="tk" text-anchor="middle"') : ""); });
+  s += '<line class="ax" x1="' + L + '" x2="' + (W - Rm) + '" y1="' + (H - B) + '" y2="' + (H - B) + '"/><line class="ax" x1="' + L + '" x2="' + L + '" y1="' + top + '" y2="' + (H - B) + '"/>';
+  if (!logY && dom.lo < 0 && dom.hi > 0) s += '<line x1="' + L + '" x2="' + (W - Rm) + '" y1="' + r1(Y(0)) + '" y2="' + r1(Y(0)) + '" stroke="#a3acb9"/>';
+  s += '<g clip-path="url(#lc' + k + ')">';
+  S.forEach((se, j) => {
+    let p = "", pen = false, cnt = 0;
+    xs.forEach((x, i) => { const y = se.y[i]; if (okX(x) && okY(y)) { p += (pen ? "L" : "M") + r1(X(x)) + "," + r1(Y(y)); pen = true; cnt++; } else pen = false; });
+    if (p) s += '<path d="' + p + '" fill="none" stroke="' + CAT[j % 8] + '" stroke-width="2.4" stroke-linejoin="round"' + (se.dash ? ' stroke-dasharray="7 5"' : ' stroke-linecap="round"') + "/>";
+    if (cnt === 1 || xs.length <= 12) xs.forEach((x, i) => { const y = se.y[i]; if (okX(x) && okY(y)) s += '<circle cx="' + r1(X(x)) + '" cy="' + r1(Y(y)) + '" r="2.8" fill="' + CAT[j % 8] + '"/>'; });
+  });
+  s += "</g>";
+  if (hl) { const y = Y(clamp(hl.y, dom.lo, dom.hi)); s += '<line x1="' + L + '" x2="' + (W - Rm) + '" y1="' + r1(y) + '" y2="' + r1(y) + '" stroke="#b42318" stroke-width="1.5" stroke-dasharray="6 4"/>' + (hl.label ? T(W - Rm - 2, y - 6, hl.label, 'text-anchor="end" class="vl halo" style="fill:#b42318" font-weight="600"') : ""); }
+  if (vl) { const x = X(clamp(vl.x, xdom.lo, xdom.hi)); s += '<line x1="' + r1(x) + '" x2="' + r1(x) + '" y1="' + top + '" y2="' + (H - B) + '" stroke="#475569" stroke-width="1.5" stroke-dasharray="5 4"/>' + (vl.label ? T(x + (x > L + pw * 0.7 ? -5 : 5), top + 12, vl.label, 'text-anchor="' + (x > L + pw * 0.7 ? "end" : "start") + '" class="vl halo" font-weight="600"') : ""); }
+  mk.forEach(m => {
+    const x = X(m.x), y = Y(m.y);
+    if (!isFinite(x) || !isFinite(y) || x < L - 1 || x > W - Rm + 1 || y < top - 1 || y > H - B + 1) return;
+    const right = x > L + pw * 0.75;
+    s += '<circle cx="' + r1(x) + '" cy="' + r1(y) + '" r="5" fill="#111827" stroke="#fff" stroke-width="2"/>';
+    if (m.label != null && m.label !== "") s += T(x + (right ? -8 : 8), y - 8, m.label, 'class="vl halo" font-weight="600" text-anchor="' + (right ? "end" : "start") + '"');
+  });
+  if (skipped) s += T(W - Rm, top - 5, NONPOS, 'text-anchor="end" font-size="11" fill="#667185"');
+  if (d.xlabel) s += T(L + pw / 2, H - 6, d.xlabel, 'class="lbl" text-anchor="middle"');
+  s += axTitleY(ylab, 13, top + (H - B - top) / 2);
+  return s + "</svg>";
+}
+
+function vHeat(d, W, k, title) {
+  const M = arr(d.matrix).map(r => Array.isArray(r) ? r : [r]);
+  const R = M.length; let C = 0; M.forEach(r => { C = Math.max(C, r.length); });
+  if (!R || !C) throw new Error("the matrix is empty");
+  const dg = d.digits, vals = [];
+  M.forEach(r => r.forEach(x => { if (fin(x)) vals.push(x); }));
+  const [vmin, vmax] = vals.length ? ext(vals) : [0, 1];
+  const unit = vals.length && vmin >= 0 && vmax <= 1;  // probabilities/weights: fixed 0..1 colour scale
+  const lo = fin(d.min) ? d.min : vmin, hi = fin(d.max) ? d.max : (unit ? 1 : vmax);
+  let col, stops, a0, a1, div = lo < 0;
+  if (div) { const m = Math.max(Math.abs(lo), Math.abs(hi)) || 1; a0 = -m; a1 = m; stops = DIV; col = x => ramp(DIV, (x + m) / (2 * m)); }
+  else { a0 = fin(d.min) ? d.min : Math.min(0, lo); a1 = hi > a0 ? hi : a0 + 1; stops = SEQ; col = x => ramp(SEQ, (x - a0) / (a1 - a0)); }
+  const rl = i => axLabel(d.row_labels, i), cl = j => axLabel(d.col_labels, j);
+  const big = R > 12 || C > 12;
+  const rlw = Math.max(...Array.from({ length: R }, (_, i) => tw(rl(i), 12.5)));
+  const L = 10 + rlw + (d.ylabel ? 22 : 0);
+  const txt = big ? null : M.map(r => Array.from({ length: C }, (_, j) => fmt(r[j], dg)));
+  let maxT = 1; if (txt) txt.forEach(r => r.forEach(s => { maxT = Math.max(maxT, s.length); }));
+  let cw, ch;
+  if (big) { cw = clamp((W - L - 14) / C, 3, 40); ch = Math.max(3, Math.min(cw, 26, 520 / R)); }
+  else { cw = clamp(Math.max((W - L - 12) / C, maxT * 7 + 10), 42, 92); ch = clamp(cw * 0.6, 30, 46); }
+  const fs = clamp((cw - 6) / (maxT * 0.6), 9.5, 13);
+  const clw = Math.max(...Array.from({ length: C }, (_, j) => tw(cl(j), 12)));
+  const rot = !big && clw > cw - 4, colH = rot ? Math.min(clw, 110) * 0.66 + 12 : 22;
+  const kc = big ? Math.max(1, Math.ceil((clw + 8) / cw)) : 1, kr = big ? Math.max(1, Math.ceil(15 / ch)) : 1;
+  const top = 6 + (d.xlabel ? 20 : 0) + colH, gw = C * cw, gh = R * ch;
+  const NW = Math.max(W, L + gw + 12), ox = Math.max(0, (W - (L + gw + 12)) / 2), gx = ox + L;
+  const H = top + gh + 56, sw = big ? 0 : 2;
+  let s = svgOpen(NW, H, title).replace('width="100%"', NW > W ? 'width="' + Math.round(NW) + '"' : 'width="100%"');
+  s += '<defs><linearGradient id="hg' + k + '">' + stops.map((c, i) => '<stop offset="' + (i / (stops.length - 1)) + '" stop-color="' + c + '"/>').join("") + "</linearGradient></defs>";
+  if (d.xlabel) s += T(gx + gw / 2, 15, d.xlabel, 'class="lbl" text-anchor="middle"');
+  for (let j = 0; j < C; j += kc) {
+    const x = gx + j * cw + cw / 2;
+    s += rot ? '<text class="tk" text-anchor="start" transform="translate(' + r1(x - 3) + "," + r1(top - 6) + ') rotate(-40)">' + esc(cl(j)) + "</text>" : T(x, top - 7, cl(j), 'class="tk" text-anchor="middle"' + (big ? "" : ' font-weight="600"'));
+  }
+  let cells = "";
+  for (let i = 0; i < R; i++) {
+    const y = top + i * ch;
+    if (i % kr === 0) s += T(gx - 6, y + ch / 2 + 4, rl(i), 'class="tk" text-anchor="end"' + (big ? "" : ' font-weight="600"'));
+    for (let j = 0; j < C; j++) {
+      const v = M[i][j], x = gx + j * cw, tip = "<title>" + esc(rl(i) + ", " + cl(j) + ": " + fmt(v, dg)) + "</title>";
+      const rect = f => '<rect x="' + r1(x) + '" y="' + r1(y) + '" width="' + r1(cw) + '" height="' + r1(ch) + '" fill="' + f + '"' + (sw ? ' stroke="#fff" stroke-width="' + sw + '"' : ' shape-rendering="crispEdges"') + ">" + tip + "</rect>";
+      if (!fin(v)) { cells += rect("#e3e6eb") + (big ? "" : T(x + cw / 2, y + ch / 2 + 4, v == null ? "—" : "undefined", 'text-anchor="middle" font-size="10.5" fill="#b42318"')); continue; }
+      const c = col(v);
+      cells += rect(c) + (big ? "" : T(x + cw / 2, y + ch / 2 + fs * 0.36, txt[i][j], 'text-anchor="middle" fill="' + (lum(c) < 0.22 ? "#fff" : "#111827") + '" font-size="' + r1(fs) + '" style="font-variant-numeric:tabular-nums"'));
+    }
+  }
+  s += cells;
+  if (d.ylabel) s += axTitleY(d.ylabel, ox + 13, top + gh / 2);
+  const lw = Math.min(220, Math.max(120, gw)), ly = top + gh + 16;
+  s += '<rect x="' + r1(gx) + '" y="' + ly + '" width="' + lw + '" height="10" rx="2" fill="url(#hg' + k + ')" stroke="#cbd2dc"/>' + T(gx, ly + 25, fmt(a0, dg), 'class="tk"') + T(gx + lw, ly + 25, fmt(a1, dg), 'class="tk" text-anchor="end"');
+  if (div) s += T(gx + lw / 2, ly + 25, "0", 'class="tk" text-anchor="middle"');
+  return s + "</svg>";
+}
+
+function vPlane(d, W, k, title) {
+  const V = arr(d.vectors).filter(q => q && fin(q.x) && fin(q.y));
+  const P = arr(d.points).filter(q => q && fin(q.x) && fin(q.y));
+  const PA = arr(d.paths).filter(p => p && Array.isArray(p.points)).map(p => ({ label: p.label, pts: p.points.filter(q => Array.isArray(q) && fin(q[0]) && fin(q[1])) })).filter(p => p.pts.length);
+  if (!V.length && !P.length && !PA.length) throw new Error("no vectors, points or paths");
+  const fr = q => Array.isArray(q.from) && fin(q.from[0]) && fin(q.from[1]) ? q.from : [0, 0];
+  const xs = [0], ys = [0];
+  V.forEach(q => { const f = fr(q); xs.push(f[0], f[0] + q.x); ys.push(f[1], f[1] + q.y); });
+  P.forEach(q => { xs.push(q.x); ys.push(q.y); });
+  PA.forEach(p => p.pts.forEach(q => { xs.push(q[0]); ys.push(q[1]); }));
+  let [x0, x1] = ext(xs), [y0, y1] = ext(ys);
+  const rg = arr(d.range);
+  if (rg.length === 4 && rg.every(fin) && rg[1] > rg[0] && rg[3] > rg[2]) [x0, x1, y0, y1] = rg;
+  else { const sp = Math.max(x1 - x0, y1 - y0) || 2, m = sp * 0.14; x0 -= m; x1 += m; y0 -= m; y1 += m; }
+  const H = Math.round(clamp(W * 0.72, 270, 460));
+  const L = 40 + (d.ylabel ? 20 : 0), Rm = 14, Tm = 14, Bm = 30 + (d.xlabel ? 20 : 0), pw = W - L - Rm, ph = H - Tm - Bm;
+  const sc = Math.min(pw / (x1 - x0), ph / (y1 - y0)), cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+  x0 = cx - pw / sc / 2; x1 = cx + pw / sc / 2; y0 = cy - ph / sc / 2; y1 = cy + ph / sc / 2;
+  const X = v => L + (v - x0) * sc, Y = v => Tm + (y1 - v) * sc;
+  const st = niceStep(x1 - x0, Math.max(4, Math.floor(pw / 70)));
+  let s = svgOpen(W, H, title) + "<defs>" + '<clipPath id="pc' + k + '"><rect x="' + L + '" y="' + Tm + '" width="' + r1(pw) + '" height="' + r1(ph) + '"/></clipPath>';
+  V.forEach((q, i) => { s += '<marker id="pm' + k + "_" + i + '" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0L10,5L0,10z" fill="' + CAT[i % 8] + '"/></marker>'; });
+  s += '</defs><rect x="' + L + '" y="' + Tm + '" width="' + r1(pw) + '" height="' + r1(ph) + '" fill="#fff" stroke="#cfd6e0"/>';
+  ticks(x0, x1, st).forEach(t => { const x = X(t); s += '<line class="gl" x1="' + r1(x) + '" x2="' + r1(x) + '" y1="' + Tm + '" y2="' + r1(Tm + ph) + '"/>' + T(x, Tm + ph + 16, tickFmt(t, st), 'class="tk" text-anchor="middle"'); });
+  ticks(y0, y1, st).forEach(t => { const y = Y(t); s += '<line class="gl" x1="' + L + '" x2="' + r1(L + pw) + '" y1="' + r1(y) + '" y2="' + r1(y) + '"/>' + T(L - 6, y + 4, tickFmt(t, st), 'class="tk" text-anchor="end"'); });
+  if (x0 < 0 && x1 > 0) s += '<line x1="' + r1(X(0)) + '" x2="' + r1(X(0)) + '" y1="' + Tm + '" y2="' + r1(Tm + ph) + '" stroke="#7c8798" stroke-width="1.3"/>';
+  if (y0 < 0 && y1 > 0) s += '<line x1="' + L + '" x2="' + r1(L + pw) + '" y1="' + r1(Y(0)) + '" y2="' + r1(Y(0)) + '" stroke="#7c8798" stroke-width="1.3"/>';
+  let labs = "";
+  s += '<g clip-path="url(#pc' + k + ')">';
+  PA.forEach((p, i) => {
+    const c = CAT[(V.length + P.length + i) % 8];
+    s += '<polyline fill="none" stroke="' + c + '" stroke-width="2" stroke-linejoin="round" points="' + p.pts.map(q => r1(X(q[0])) + "," + r1(Y(q[1]))).join(" ") + '"/>' + p.pts.map(q => '<circle cx="' + r1(X(q[0])) + '" cy="' + r1(Y(q[1])) + '" r="3.2" fill="' + c + '"/>').join("");
+    const e = p.pts[p.pts.length - 1];
+    if (p.label != null && p.label !== "") labs += T(X(e[0]) + 7, Y(e[1]) - 7, p.label, 'class="vl halo" font-weight="600" style="fill:' + c + '"');
+  });
+  V.forEach((q, i) => {
+    const c = CAT[i % 8], f = fr(q), ax = X(f[0]), ay = Y(f[1]), bx = X(f[0] + q.x), by = Y(f[1] + q.y);
+    const dx = bx - ax, dy = by - ay, len = Math.hypot(dx, dy);
+    if (len < 1) { s += '<circle cx="' + r1(ax) + '" cy="' + r1(ay) + '" r="4" fill="' + c + '"/>'; }
+    else {
+      const ux = dx / len, uy = dy / len, cut = Math.min(10, len * 0.6);
+      s += '<line x1="' + r1(ax) + '" y1="' + r1(ay) + '" x2="' + r1(bx - ux * cut) + '" y2="' + r1(by - uy * cut) + '" stroke="' + c + '" stroke-width="2.6" marker-end="url(#pm' + k + "_" + i + ')"/>';
+    }
+    if (q.label != null && q.label !== "") {
+      const ux = len < 1 ? 0.7 : dx / len, uy = len < 1 ? -0.7 : dy / len;
+      labs += T(bx + ux * 13, by + uy * 13 + 4, q.label, 'class="vl halo" font-weight="700" font-size="13" text-anchor="' + (ux > 0.35 ? "start" : ux < -0.35 ? "end" : "middle") + '" style="fill:' + c + '"');
+    }
+  });
+  P.forEach((q, i) => {
+    const c = CAT[(V.length + i) % 8];
+    s += '<circle cx="' + r1(X(q.x)) + '" cy="' + r1(Y(q.y)) + '" r="5" fill="' + c + '" stroke="#fff" stroke-width="1.5"/>';
+    if (q.label != null && q.label !== "") labs += T(X(q.x) + 8, Y(q.y) - 8, q.label, 'class="vl halo" font-weight="600"');
+  });
+  s += "</g>" + labs;
+  if (d.xlabel) s += T(L + pw / 2, H - 5, d.xlabel, 'class="lbl" text-anchor="middle"');
+  s += axTitleY(d.ylabel, 12, Tm + ph / 2);
+  return s + "</svg>";
+}
+
+function vGraph(d, W, k, title) {
+  const N = arr(d.nodes).filter(n => n && n.id != null);
+  if (!N.length) throw new Error("the graph has no nodes");
+  const E = arr(d.edges).filter(e => e && e.from != null && e.to != null);
+  const dir = d.directed !== false, dg = d.digits;
+  const loops = new Set(E.filter(e => String(e.from) === String(e.to)).map(e => String(e.from)));
+  const H = Math.round(clamp(W * 0.62, 280, 430) + (loops.size ? 30 : 0)), pad = loops.size ? 78 : 50;
+  const vs = N.map(n => n.value).filter(fin), [v0, v1] = vs.length ? ext(vs) : [0, 0];
+  const P = {};
+  N.forEach((n, i) => {
+    const t = fin(n.value) ? (v1 > v0 ? (n.value - v0) / (v1 - v0) : 0.6) : null;
+    const r = t == null ? 19 : 14 + 13 * t;
+    let x, y;
+    if (fin(n.x) && fin(n.y)) { x = pad + clamp(n.x, 0, 1) * (W - 2 * pad); y = pad + clamp(n.y, 0, 1) * (H - 2 * pad); }
+    else if (N.length === 1) { x = W / 2; y = H / 2; }
+    else { const ry = H / 2 - pad, rx = Math.min(W / 2 - pad - 10, ry * 1.6), a = -Math.PI / 2 + 2 * Math.PI * i / N.length; x = W / 2 + rx * Math.cos(a); y = H / 2 + ry * Math.sin(a); }
+    P[String(n.id)] = { x, y, r, t, n };
+  });
+  const key = (a, b) => String(a) + "\u0001" + String(b);
+  const K = new Set(E.map(e => key(e.from, e.to)));
+  const ws = E.map(e => Math.abs(e.weight)).filter(fin), wmax = ws.length ? Math.max(...ws) : 0;
+  const unit = (x, y) => { const l = Math.hypot(x, y) || 1; return [x / l, y / l]; };
+  let s = svgOpen(W, H, title) + '<defs><marker id="ga' + k + '" viewBox="0 0 10 10" refX="0" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0L10,5L0,10z" fill="#475569"/></marker></defs>';
+  let es = "", labs = "";
+  const AL = dir ? 10 : 0;
+  E.forEach(e => {
+    const a = P[String(e.from)], b = P[String(e.to)]; if (!a || !b) return;
+    const sw = fin(e.weight) && wmax > 0 ? 1.1 + 3.4 * Math.abs(e.weight) / wmax : 1.8;
+    const lab = e.label != null ? String(e.label) : (fin(e.weight) ? fmt(e.weight, dg) : "");
+    let path, lx, ly;
+    if (a === b) {
+      let ang = Math.atan2(a.y - H / 2, a.x - W / 2); if (Math.abs(a.x - W / 2) + Math.abs(a.y - H / 2) < 1) ang = -Math.PI / 2;
+      const p1 = [a.x + a.r * Math.cos(ang - 0.45), a.y + a.r * Math.sin(ang - 0.45)], p2 = [a.x + a.r * Math.cos(ang + 0.45), a.y + a.r * Math.sin(ang + 0.45)];
+      const D2 = a.r + 38, c1 = [a.x + D2 * Math.cos(ang - 0.75), a.y + D2 * Math.sin(ang - 0.75)], c2 = [a.x + D2 * Math.cos(ang + 0.75), a.y + D2 * Math.sin(ang + 0.75)];
+      const u = unit(p2[0] - c2[0], p2[1] - c2[1]), en = [p2[0] - u[0] * AL, p2[1] - u[1] * AL];
+      path = "M" + r1(p1[0]) + "," + r1(p1[1]) + "C" + r1(c1[0]) + "," + r1(c1[1]) + " " + r1(c2[0]) + "," + r1(c2[1]) + " " + r1(en[0]) + "," + r1(en[1]);
+      lx = a.x + (a.r + 34) * Math.cos(ang); ly = a.y + (a.r + 34) * Math.sin(ang);
+    } else {
+      const dx = b.x - a.x, dy = b.y - a.y, Ln = Math.hypot(dx, dy) || 1;
+      if (dir && K.has(key(e.to, e.from))) {
+        const off = Math.min(42, Ln * 0.22), cx = (a.x + b.x) / 2 - dy / Ln * off, cy = (a.y + b.y) / 2 + dx / Ln * off;
+        const u1 = unit(cx - a.x, cy - a.y), u2 = unit(b.x - cx, b.y - cy);
+        const sx = a.x + u1[0] * a.r, sy = a.y + u1[1] * a.r, ex = b.x - u2[0] * (b.r + AL + 1), ey = b.y - u2[1] * (b.r + AL + 1);
+        path = "M" + r1(sx) + "," + r1(sy) + "Q" + r1(cx) + "," + r1(cy) + " " + r1(ex) + "," + r1(ey);
+        lx = 0.25 * sx + 0.5 * cx + 0.25 * ex; ly = 0.25 * sy + 0.5 * cy + 0.25 * ey;
+      } else {
+        const ux = dx / Ln, uy = dy / Ln, sx = a.x + ux * a.r, sy = a.y + uy * a.r, ex = b.x - ux * (b.r + AL + 1), ey = b.y - uy * (b.r + AL + 1);
+        path = "M" + r1(sx) + "," + r1(sy) + "L" + r1(ex) + "," + r1(ey);
+        const t = dir ? 0.4 : 0.5; lx = sx + (b.x - ux * b.r - sx) * t; ly = sy + (b.y - uy * b.r - sy) * t;
+      }
+    }
+    es += '<path d="' + path + '" fill="none" stroke="#64748b" stroke-width="' + r1(sw) + '"' + (dir ? ' marker-end="url(#ga' + k + ')"' : "") + "/>";
+    if (lab) labs += T(lx, ly + 4, lab, 'class="vl halo" text-anchor="middle" font-weight="600"');
+  });
+  let ns = "";
+  N.forEach(n => {
+    const p = P[String(n.id)], fill = p.t == null ? "#dbe6fb" : ramp(SEQ, 0.12 + 0.88 * p.t), tc = lum(fill) < 0.22 ? "#fff" : "#111827";
+    const lab = n.label != null ? String(n.label) : String(n.id);
+    ns += '<circle cx="' + r1(p.x) + '" cy="' + r1(p.y) + '" r="' + r1(p.r) + '" fill="' + fill + '" stroke="#1e3a8a" stroke-width="1.5"><title>' + esc(lab + (fin(n.value) ? ": " + fmt(n.value, dg) : "")) + "</title></circle>";
+    if (tw(lab, 12.5) <= 2 * p.r - 6) ns += T(p.x, p.y + 4.5, lab, 'text-anchor="middle" font-size="12.5" font-weight="700" fill="' + tc + '"');
+    else ns += T(p.x, p.y - p.r - 7, lab, 'text-anchor="middle" class="vl halo" font-weight="700"');
+    if (fin(n.value)) {
+      let vx = p.x, vy = p.y + p.r + 15;
+      if (loops.has(String(n.id))) { let ang = Math.atan2(p.y - H / 2, p.x - W / 2); if (Math.abs(p.x - W / 2) + Math.abs(p.y - H / 2) < 1) ang = -Math.PI / 2; if (Math.sin(ang) > 0.5) vy = p.y - p.r - 7; else if (Math.abs(Math.cos(ang)) > 0.5) { vy = p.y + p.r + 15; } }
+      ns += T(vx, vy, fmt(n.value, dg), 'text-anchor="middle" class="vl halo"');
+    }
+  });
+  return s + es + ns + labs + "</svg>";
+}
+
+function pval(v, dg) {
+  if (v == null) return '<span class="muted">—</span>';
+  if (typeof v === "number") return fmtH(v, dg);
+  if (typeof v === "string") return esc(v);
+  if (Array.isArray(v)) {
+    if (v.length && v.every(Array.isArray)) { const C = Math.max(...v.map(r => r.length)); return '<table class="mini"><tbody>' + v.slice(0, 12).map(r => "<tr>" + r.slice(0, 12).map(x => "<td>" + fmtH(x, dg) + "</td>").join("") + "</tr>").join("") + "</tbody></table>" + (v.length > 12 || C > 12 ? '<div class="ps-note">showing ' + Math.min(12, v.length) + " × " + Math.min(12, C) + " of " + v.length + " × " + C + "</div>" : ""); }
+    return fmtH(v.slice(0, 40), dg) + (v.length > 40 ? " …" : "");
+  }
+  if (typeof v === "boolean") return v ? "true" : "false";
+  return esc(JSON.stringify(v));
+}
+function vPipe(d) {
+  const st = arr(d.stages).filter(s => s && typeof s === "object");
+  if (!st.length) throw new Error("the pipeline has no stages");
+  return '<ol class="pipe">' + st.map((s, i) => '<li class="pipe-item">' + (i ? '<span class="pipe-arrow" aria-hidden="true">→</span>' : "") + '<div class="pipe-stage"><div class="ps-label">' + esc(s.label) + '</div><div class="ps-val">' + pval(s.value, d.digits) + "</div>" + (s.note ? '<div class="ps-note">' + esc(s.note) + "</div>" : "") + "</div></li>").join("") + "</ol>";
+}
+function vTable(d) {
+  const cols = arr(d.columns), rows = arr(d.rows).filter(Array.isArray);
+  if (!cols.length && !rows.length) throw new Error("the table is empty");
+  const hl = new Set(arr(d.highlight_rows));
+  const numCol = j => rows.length > 0 && rows.every(r => r[j] == null || r[j] === "" || typeof r[j] === "number");
+  return '<table class="dtab"><thead><tr>' + cols.map((c, j) => '<th scope="col"' + (numCol(j) ? ' style="text-align:right"' : "") + ">" + esc(c) + "</th>").join("") + "</tr></thead><tbody>" +
+    rows.map((r, i) => '<tr' + (hl.has(i) ? ' class="hl"' : "") + ">" + r.map(x => x == null ? '<td class="n muted">—</td>' : typeof x === "number" ? '<td class="n">' + fmtH(x, d.digits) + "</td>" : "<td>" + (Array.isArray(x) ? fmtH(x, d.digits) : esc(fmt(x, d.digits))) + "</td>").join("") + "</tr>").join("") + "</tbody></table>";
+}
+/* tolerate common shape slips without mutating out */
+function shape(t, d, title) {
+  if (d == null) return d;
+  const A = Array.isArray(d), A2 = A && d.length > 0 && d.every(Array.isArray);
+  if (t === "heatmap" && A2) return { matrix: d };
+  if (t === "bars" && A && !A2) return { labels: d.map((_, i) => String(i + 1)), values: d };
+  if (t === "pipeline" && A) d = { stages: d };
+  if (t === "pipeline" && Array.isArray(d.stages)) return Object.assign({}, d, { stages: d.stages.map((s, i) => (s !== null && typeof s === "object" && !Array.isArray(s)) ? s : { label: "Step " + (i + 1), value: s }) });
+  if (t === "table" && A2) return { columns: d[0].map((_, j) => "c" + (j + 1)), rows: d };
+  if (t === "line" && A && !A2) return { x: d.map((_, i) => i), series: [{ name: title || "y", y: d }] };
+  if (t === "line" && !A && typeof d === "object") {
+    let o = d;
+    if (!Array.isArray(o.series)) {
+      const n = Array.isArray(o.x) ? o.x.length : 0;
+      const numArr = v => Array.isArray(v) && v.length > 0 && v.every(x => typeof x === "number" || x === null);
+      const ser = Array.isArray(o.y) ? [{ name: title || "y", y: o.y }]
+        : Object.keys(o).filter(k => k !== "x" && numArr(o[k]) && (!n || o[k].length === n)).map(k => ({ name: k, y: o[k] }));
+      o = Object.assign({}, o, { series: ser });
+    }
+    if (!Array.isArray(o.x)) { let n = 0; o.series.forEach(s => { if (s && Array.isArray(s.y)) n = Math.max(n, s.y.length); }); o = Object.assign({}, o, { x: Array.from({ length: n }, (_, i) => i) }); }
+    return o;
+  }
+  return d;
+}
+const RENDER = { bars: vBars, line: vLine, heatmap: vHeat, plane: vPlane, graph: vGraph, pipeline: vPipe, table: vTable };
+function isWide(t, d) {
+  switch (t) {
+    case "line": case "pipeline": return true;
+    case "heatmap": return arr(d.matrix).some(r => arr(r).length > 5);
+    case "bars": return arr(d.labels).length * (Array.isArray(d.series) ? d.series.length : 1) > 12;
+    case "table": return arr(d.columns).length > 4;
+    case "graph": return arr(d.nodes).length > 6;
+  }
+  return false;
+}
+
+/* ---------- static sections ---------- */
+const VIEWS = arr(PAGE.views).filter(v => v && typeof v === "object");
+const READ = arr(PAGE.readouts).filter(r => r && r.key != null);
+const INV = arr(PAGE.invariants).filter(v => v && v.expr != null);
+const TESTS = arr(PAGE.tests).filter(t => t && typeof t === "object");
+const EXP = arr(PAGE.explorations).filter(e => e && typeof e === "object");
+const setups = ex => { const st = arr(ex.steps).filter(s => s && typeof s === "object"); return st.length ? st.map((s, j) => ({ label: s.label != null ? String(s.label) : "Step " + (j + 1), preset: s.preset, expect: s.expect, step: true })) : [{ label: null, preset: ex.preset, expect: ex.expect, step: false }]; };
+const exStep = {};
+let activeEx = null;
+
+function safe(fn, where) { try { fn(); } catch (e) { console.warn("[page] " + where + ": " + msg(e)); } }
+function hideSec(id, empty) { const el = $(id); if (el) el.hidden = !!empty; }
+
+function renderHeader() {
+  const m = PAGE.meta || {}, p = PAGE.paper || {};
+  const title = m.title || p.title || "Interactive explainer";
+  D.title = title; $("page-title").textContent = title;
+  if (m.subtitle) { $("page-subtitle").textContent = m.subtitle; $("page-subtitle").hidden = false; }
+  const chip = (k, v) => v ? "<li><b>" + esc(k) + "</b>" + esc(v) + "</li>" : "";
+  $("page-chips").innerHTML = chip("Paper", p.title) + chip("Section", String(p.section || "").replace(/^(section|sec\.?|§)\s*/i, "")) + chip("Equation", String(p.equation || "").replace(/^(equation|eqn?\.?)\s*/i, "")) + chip("For", m.audience);
+  if (fatal) { $("fatal").textContent = fatal; $("fatal").hidden = false; }
+}
+function renderStatic() {
+  safe(() => {
+    $("idea-body").innerHTML = PAGE.idea_html || ""; $("why-body").innerHTML = PAGE.why_html || "";
+    $("idea-card").hidden = !PAGE.idea_html; $("why-card").hidden = !PAGE.why_html;
+    hideSec("idea", !PAGE.idea_html && !PAGE.why_html);
+  }, "idea");
+  safe(() => {
+    const eq = PAGE.equation || {}, sy = arr(PAGE.symbols).filter(Boolean);
+    $("eq-display").innerHTML = eq.mathml_html || ""; $("eq-display").hidden = !eq.mathml_html;
+    $("eq-caption").innerHTML = eq.caption_html || "";
+    $("symbols-body").innerHTML = sy.map(s => "<tr><td>" + (s.symbol_html || "") + "</td><td>" + (s.meaning_html || "") + "</td><td>" + (s.where_html || '<span class="muted">—</span>') + "</td></tr>").join("");
+    $("symbols-wrap").hidden = !sy.length;
+    hideSec("equation", !eq.mathml_html && !sy.length);
+  }, "equation");
+  safe(() => {
+    const st = arr(PAGE.steps).filter(Boolean);
+    $("steps-list").innerHTML = st.map(s => "<li><h3>" + (s.title_html || "") + "</h3><div>" + (s.text_html || "") + "</div></li>").join("");
+    hideSec("how", !st.length);
+  }, "steps");
+  safe(() => {
+    const c = PAGE.caveat;
+    if (!c || (!c.title && !c.text_html)) { hideSec("caveat", true); return; }
+    $("caveat-kind").textContent = ({ limitation: "Limitation", assumption: "Assumption", misconception: "Common misunderstanding" })[String(c.kind || "").toLowerCase()] || "Limitation";
+    $("caveat-title").textContent = c.title || ""; $("caveat-title").hidden = !c.title;
+    $("caveat-body").innerHTML = c.text_html || "";
+  }, "caveat");
+  safe(() => {
+    const p = PAGE.paper || {}, m = PAGE.meta || {}, g = PAGE.grounding || {};
+    let c = "";
+    if (p.authors) c += esc(p.authors) + (p.year ? " (" + esc(p.year) + ")" : "") + ". ";
+    else if (p.year) c += "(" + esc(p.year) + ") ";
+    if (p.title) c += "<cite>" + esc(p.title) + "</cite>. ";
+    const secTxt = String(p.section || "").replace(/^(section|sec\.?|§)\s*/i, "");
+    const loc = [secTxt ? (/^\d/.test(secTxt) ? "Section " + secTxt : secTxt) : "", p.equation ? "Equation " + String(p.equation).replace(/^(equation|eqn?\.?)\s*/i, "") : ""].filter(Boolean).join(", ");
+    if (loc) c += esc(loc) + ". ";
+    if (m.source_url && /^https?:\/\//i.test(m.source_url)) c += '<a href="' + esc(m.source_url) + '" target="_blank" rel="noopener noreferrer">Read the paper</a>';
+    $("citation").innerHTML = c || '<span class="muted">No citation details were provided.</span>';
+    const li = a => arr(a).filter(Boolean).map(x => "<li>" + x + "</li>").join("") || '<li class="muted">None listed.</li>';
+    $("from-paper").innerHTML = li(g.from_paper_html); $("simplifications").innerHTML = li(g.simplifications_html);
+    if (g.not_claimed_html) { $("not-claimed").innerHTML = "<strong>Not claimed:</strong> " + g.not_claimed_html; $("not-claimed").hidden = false; }
+  }, "grounding");
+  safe(renderReport, "report");
+}
+function renderReport() {
+  const r = PAGE.report, m = PAGE.meta || {};
+  if (!r || typeof r !== "object") { $("report").innerHTML = '<p class="muted" style="margin-top:10px">No generation report was attached to this page.</p>'; return; }
+  const cell = (k, v) => v === undefined || v === null || v === "" ? "" : "<div>" + esc(k) + "<b>" + esc(typeof v === "number" ? fmt(v, 1) : v) + "</b></div>";
+  const tok = (fin(r.prompt_tokens) || fin(r.completion_tokens)) ? (r.prompt_tokens || 0) + (r.completion_tokens || 0) : undefined;
+  let h = '<div class="rep">' + cell("Model calls", r.calls) + cell("Prompt tokens", r.prompt_tokens) + cell("Completion tokens", r.completion_tokens) + cell("Total tokens", tok) + cell("Elapsed (s)", r.elapsed_s) + cell("Revisions", r.revisions) + "</div>";
+  if (m.model || m.generated_at) h += "<p>" + (m.model ? "Model: " + esc(m.model) + ". " : "") + (m.generated_at ? "Generated: " + esc(m.generated_at) + "." : "") + "</p>";
+  const ch = arr(r.checks).filter(Boolean);
+  if (ch.length) h += '<p style="margin:0 0 4px;font-weight:600;color:var(--ink)">Generator checks</p><ul class="chk">' + ch.map(c => '<li class="' + (c.ok ? "ok" : "bad") + '">' + mark(!!c.ok) + "<span>" + esc(c.name) + (c.detail ? ' <span class="muted">' + esc(c.detail) + "</span>" : "") + "</span></li>").join("") + "</ul>";
+  $("report").innerHTML = h;
+}
+function renderToc() {
+  const items = [["idea", "Idea"], ["equation", "Equation"], ["how", "How it works"], ["playground", "Playground"], ["explore", "Explorations"], ["caveat", "Caveat"], ["checks", "Checks"], ["grounding", "Sources"]];
+  $("toc").innerHTML = items.filter(([id]) => !$(id).hidden).map(([id, t]) => '<a href="#' + id + '">' + t + "</a>").join("");
+}
+
+/* ---------- playground ---------- */
+const viewCards = [];
+function buildPlayground() {
+  $("readouts").innerHTML = READ.map(r => '<div class="readout" id="readout-' + esc(r.key) + '"><div class="ro-label">' + esc(r.label != null ? r.label : r.key) + '</div><div class="ro-val"><span class="v">—</span>' + (r.unit ? ' <span class="unit">' + esc(r.unit) + "</span>" : "") + "</div></div>").join("");
+  $("readouts").hidden = !READ.length;
+  const vb = $("views");
+  VIEWS.forEach((v, i) => {
+    const f = D.createElement("figure");
+    f.className = "view card"; f.id = "view-" + (v.id != null ? v.id : i); f.dataset.type = v.type;
+    f.innerHTML = "<h3>" + esc(v.title || "") + '</h3><div class="viz"></div>' + (v.caption_html ? "<figcaption>" + v.caption_html + "</figcaption>" : "");
+    vb.appendChild(f); viewCards.push(f);
+  });
+  $("invariants-card").hidden = !INV.length;
+  $("all-values").addEventListener("toggle", () => { if ($("all-values").open) renderAll(); });
+  $("reset-defaults").addEventListener("click", () => { state = clone(DEF); activeEx = null; EXP.forEach((_, i) => { delete exStep[i]; }); syncAll(); update(); markStepButtons(); });
+}
+function readoutVal(v, dg) {
+  if (v == null) return '<span class="muted" title="no value">—</span>';
+  if (typeof v === "number") return fmtH(v, dg);
+  if (typeof v === "boolean") return v ? "yes" : "no";
+  if (Array.isArray(v)) return v.length > 3 ? '<span style="font-size:.62em">' + fmtH(v.slice(0, 24), dg) + (v.length > 24 ? " …" : "") + "</span>" : fmtH(v, dg);
+  return esc(String(v));
+}
+let lastViewW = 0;
+function renderViews() {
+  const flags = VIEWS.map(v => { try { const d = shape(v.type, OUT[v.data], v.title); return OUTOK && d != null && isWide(v.type, d); } catch (e) { return false; } });
+  let pos = 0, prev = -1;
+  const fill = new Set();
+  flags.forEach((w, i) => { if (w) { if (pos === 1) fill.add(prev); pos = 0; } else { pos = (pos + 1) % 2; prev = i; } });
+  if (pos === 1 && prev >= 0) fill.add(prev);
+  VIEWS.forEach((v, i) => viewCards[i].classList.toggle("wide", flags[i] || fill.has(i)));
+  VIEWS.forEach((v, i) => {
+    const viz = viewCards[i].querySelector(".viz");
+    let h;
+    try {
+      if (!computeFn) throw new Error("the compute function is unavailable");
+      if (!OUTOK) throw new Error("the computation failed at this setting");
+      const d = shape(v.type, OUT[v.data], v.title);
+      if (d === undefined || d === null) throw new Error("out." + v.data + " is missing");
+      if (typeof d !== "object") throw new Error("out." + v.data + " is not an object");
+      const r = RENDER[v.type]; if (!r) throw new Error('unknown view type "' + v.type + '"');
+      h = r(d, Math.max(280, Math.floor(viz.clientWidth || 560)), i, v.title || v.type);
+    } catch (e) { h = '<div class="nodata">No data for this view (' + esc(msg(e)) + ").</div>"; }
+    viz.innerHTML = h;
+  });
+  lastViewW = $("views").clientWidth;
+}
+function renderAll() {
+  const b = $("all-values-body");
+  if (!OUTOK) { b.innerHTML = '<p class="muted">Nothing was computed.</p>'; return; }
+  const pv = (v, dp) => {
+    if (v === null || v === undefined) return '<span class="muted">—</span>';
+    if (typeof v === "number") return fmtH(v);
+    if (typeof v !== "object") return esc(String(v));
+    if (Array.isArray(v)) {
+      const nn = x => x == null || typeof x === "number";
+      if (v.length && v.every(nn)) return fmtH(v.slice(0, 60)) + (v.length > 60 ? " … (" + v.length + " values)" : "");
+      if (v.length && v.every(r => Array.isArray(r) && r.every(nn))) return pval(v);
+      if (dp > 2) return "[" + v.length + " items]";
+      return "[" + v.slice(0, 20).map(x => pv(x, dp + 1)).join(", ") + (v.length > 20 ? ", …" : "") + "]";
+    }
+    if (dp > 2) return "{…}";
+    return '<table class="kv"><tbody>' + Object.keys(v).filter(k => k.slice(0, 2) !== "__").slice(0, 40).map(k => "<tr><th>" + esc(k) + "</th><td>" + pv(v[k], dp + 1) + "</td></tr>").join("") + "</tbody></table>";
+  };
+  b.innerHTML = pv(OUT, 0);
+}
+function stateStr(st) {
+  return Object.keys(st || {}).map(k => {
+    const c = CMAP[k], v = st[k];
+    let t;
+    if (c && c.type === "toggle") t = v ? "on" : "off";
+    else if (c && c.type === "select") { const o = opts(c).find(o => String(o.value) === String(v)); t = o ? o.label : String(v); }
+    else t = fmtC(v);
+    return k + " = " + t;
+  }).join("; ");
+}
+function matches(preset) {
+  return Object.keys(preset || {}).every(k => { const c = CMAP[k]; const v = c ? norm(c, preset[k]) : preset[k]; return JSON.stringify(v) === JSON.stringify(state[k]); });
+}
+function prevOutFor(ex, j) {
+  // outputs at the previous step's preset, so a step's check can compare against it (prev.H < out.H)
+  if (!computeFn || !(j > 0)) return {};
+  const su = setups(ex)[j - 1]; if (!su) return {};
+  const st = clone(DEF); Object.keys(su.preset || {}).forEach(k => { const c = CMAP[k]; if (c) st[k] = norm(c, su.preset[k]); });
+  try { const o = computeFn(st); return (o && typeof o === "object") ? o : {}; } catch (e) { return {}; }
+}
+function checkLine(su, prev) {
+  if (su.expect == null || String(su.expect).trim() === "") return null;
+  const r = evalExpr(su.expect, OUTOK ? OUT : {}, clone(state), prev);
+  const same = matches(su.preset);
+  return { ok: r.ok, html: (same ? "Check at this setting: " : "Check at the current setting (controls changed since setup): ") + mark(r.ok) + " <code>" + esc(su.expect) + "</code>" + (!r.ok && r.err ? '<span class="emsg">' + esc(r.err) + "</span>" : "") };
+}
+function renderExChecks() {
+  EXP.forEach((ex, i) => {
+    const el = $("explore-" + (i + 1) + "-check"); if (!el) return;
+    if (exStep[i] == null) { el.hidden = true; return; }
+    const cl = checkLine(setups(ex)[exStep[i]], prevOutFor(ex, exStep[i]));
+    if (!cl) { el.hidden = true; return; }
+    el.hidden = false; el.className = "ex-check " + (cl.ok ? "ok" : "bad"); el.innerHTML = cl.html;
+  });
+  const box = $("pg-active");
+  if (activeEx == null || !EXP[activeEx.i]) { box.hidden = true; return; }
+  const ex = EXP[activeEx.i], su = setups(ex)[activeEx.j], cl = checkLine(su, prevOutFor(ex, activeEx.j));
+  box.hidden = false;
+  box.innerHTML = '<div class="ae-t">Exploration ' + (activeEx.i + 1) + ": " + esc(ex.title || "") + (su.step ? " (step " + (activeEx.j + 1) + ": " + esc(su.label) + ")" : "") + "</div>" +
+    (ex.observe_html ? '<div class="ae-o"><strong>Observe:</strong> ' + ex.observe_html + "</div>" : "") +
+    (cl ? '<p class="ex-check ' + (cl.ok ? "ok" : "bad") + '" style="margin-top:8px">' + cl.html + "</p>" : "") +
+    '<p style="margin:8px 0 0;font-size:.9rem"><a href="#exploration-' + (activeEx.i + 1) + '">Back to exploration ' + (activeEx.i + 1) + "</a></p>";
+}
+
+function update() {
+  let err = null, out = null;
+  if (!computeFn) err = "missing";
+  else {
+    try {
+      out = computeFn(clone(state));
+      if (!out || typeof out !== "object") throw new Error("compute() returned " + (out === null ? "null" : typeof out) + " instead of an object");
+    } catch (e) { err = e; out = null; }
+  }
+  OUT = out || {}; OUTOK = !!out;
+  const eb = $("pg-error");
+  if (err === "missing") { eb.innerHTML = "<strong>The playground cannot calculate.</strong> This page's compute function did not load, so readouts, charts and checks are unavailable. The explanation sections still apply."; eb.hidden = false; }
+  else if (err) { eb.innerHTML = "<strong>The calculation failed at this setting:</strong> " + esc(msg(err)) + ". Try other values or press Reset to defaults."; eb.hidden = false; }
+  else eb.hidden = true;
+  READ.forEach(r => { safe(() => { const el = $("readout-" + r.key); if (!el) return; const v = el.querySelector(".v"); v.innerHTML = OUTOK ? readoutVal(OUT[r.key], r.digits) : '<span class="muted">—</span>'; el.classList.toggle("long", v.textContent.length > 7); }, "readout"); });
+  const wb = $("pg-warning"), w = OUTOK && typeof OUT.warning === "string" ? OUT.warning.trim() : "";
+  wb.hidden = !w; if (w) wb.innerHTML = "<strong>Note:</strong> " + esc(w);
+  safe(renderViews, "views");
+  safe(() => {
+    const s = clone(state);
+    $("invariants").innerHTML = INV.map((v, i) => { const r = OUTOK ? evalExpr(v.expr, OUT, s) : { ok: false, err: "not evaluated: the calculation failed" }; return '<li id="invariant-' + (i + 1) + '" class="' + (r.ok ? "ok" : "bad") + '">' + mark(r.ok) + "<span>" + esc(v.label || v.expr) + (r.ok ? "" : '<span class="emsg">' + esc(r.err) + "</span>") + "</span></li>"; }).join("");
+  }, "invariants");
+  safe(renderExChecks, "explorations");
+  if ($("all-values").open) safe(renderAll, "all values");
+}
+
+/* ---------- explorations ---------- */
+function buildExplorations() {
+  if (!EXP.length) { hideSec("explore", true); return; }
+  $("explorations").innerHTML = EXP.map((ex, i) => {
+    const n = i + 1, su = setups(ex);
+    const part = (k, h) => h ? "<div><dt>" + k + "</dt><dd>" + h + "</dd></div>" : "";
+    const sets = su.map((s, j) => { const t = stateStr(s.preset); return t ? (s.step ? "Step " + (j + 1) + " sets " : "Sets ") + esc(t) : ""; }).filter(Boolean).join("<br>");
+    const btns = su.map((s, j) => '<button type="button" class="btn' + (s.step ? " ghost" : "") + '" id="explore-' + n + (s.step ? "-step-" + (j + 1) : "") + '" data-i="' + i + '" data-j="' + j + '">' + (s.step ? "Step " + (j + 1) + " · " + esc(s.label) : "Set up this exploration") + "</button>").join("");
+    return '<article class="card ex" id="exploration-' + n + '"><div class="ex-head"><span class="ex-n" aria-hidden="true">' + n + "</span><h3>" + esc(ex.title || "Exploration " + n) + "</h3></div><dl>" +
+      part("Change", ex.change_html) + part("Observe", ex.observe_html) + part("Why", ex.why_html) + "</dl>" +
+      (sets ? '<p class="ex-preset">' + sets + "</p>" : "") + '<div class="ex-btns">' + btns + '</div><p class="ex-check" id="explore-' + n + '-check" aria-live="polite" hidden></p></article>';
+  }).join("");
+  $("explorations").addEventListener("click", e => {
+    const b = e.target.closest("button[data-i]"); if (!b) return;
+    applyPreset(+b.dataset.i, +b.dataset.j);
+  });
+}
+function markStepButtons() {
+  D.querySelectorAll("#explorations button[data-i]").forEach(b => {
+    const on = activeEx && activeEx.i === +b.dataset.i && activeEx.j === +b.dataset.j;
+    b.classList.toggle("on", !!on); b.setAttribute("aria-pressed", on ? "true" : "false");
+  });
+}
+function applyPreset(i, j) {
+  const su = setups(EXP[i])[j]; if (!su) return;
+  const p = su.preset && typeof su.preset === "object" ? su.preset : {};
+  const keys = Object.keys(p);
+  keys.forEach(k => { const c = CMAP[k]; state[k] = c ? norm(c, clone(p[k])) : clone(p[k]); });
+  syncAll();
+  exStep[i] = j; activeEx = { i, j };
+  update(); markStepButtons();
+  $("playground").scrollIntoView({ behavior: RM ? "auto" : "smooth", block: "start" });
+  keys.forEach(k => { const w = $("ctlwrap-" + k); if (!w) return; w.classList.remove("flash"); void w.offsetWidth; w.classList.add("flash"); setTimeout(() => w.classList.remove("flash"), 2300); });
+}
+
+/* ---------- tests ---------- */
+function runTests() {
+  if (!TESTS.length) { hideSec("checks", true); return; }
+  let pass = 0;
+  $("tests-body").innerHTML = TESTS.map((t, i) => {
+    const ts = t.state && typeof t.state === "object" ? t.state : {};
+    const st = Object.assign(clone(DEF), clone(ts));
+    Object.keys(ts).forEach(k => { const c = CMAP[k]; if (c && (c.type === "select" || c.type === "toggle")) st[k] = norm(c, st[k]); });
+    let r;
+    if (!computeFn) r = { ok: false, err: "compute() is not available" };
+    else {
+      try { const out = computeFn(clone(st)); if (!out || typeof out !== "object") throw new Error("compute() returned no object"); r = evalExpr(t.expect, out, clone(st)); }
+      catch (e) { r = { ok: false, err: "compute() threw: " + msg(e) }; }
+    }
+    if (r.ok) pass++;
+    const ss = stateStr(ts);
+    return '<tr id="test-' + (i + 1) + '" class="' + (r.ok ? "ok" : "bad") + '"><td>' + esc(t.label || "Check " + (i + 1)) + '</td><td class="mk ' + (r.ok ? "ok" : "bad") + '">' + (r.ok ? '<span role="img" aria-label="pass">✓</span>' : '<span role="img" aria-label="fail">✗</span>') + '</td><td><div class="t-set">' + (ss ? "At " + esc(ss) : "At the default setting") + "</div><code>" + esc(t.expect) + "</code>" + (r.ok ? "" : '<span class="emsg">' + esc(r.err) + "</span>") + "</td></tr>";
+  }).join("");
+  $("tests-summary").innerHTML = "<strong>" + pass + " of " + TESTS.length + "</strong> checks pass" + (pass === TESTS.length ? "." : ", see the failing rows below.") + ' <span class="muted">Last run ' + new Date().toLocaleTimeString() + ".</span>";
+}
+
+/* ---------- boot ---------- */
+safe(renderHeader, "header");
+renderStatic();
+safe(buildControls, "controls");
+safe(buildPlayground, "playground");
+safe(buildExplorations, "explorations");
+safe(update, "update");
+safe(runTests, "tests");
+safe(renderToc, "toc");
+$("rerun-checks").addEventListener("click", () => safe(runTests, "tests"));
+let rt = 0;
+const onResize = () => { clearTimeout(rt); rt = setTimeout(() => { if ($("views").clientWidth !== lastViewW) safe(renderViews, "views"); }, 120); };
+if (window.ResizeObserver) new ResizeObserver(onResize).observe($("views")); else window.addEventListener("resize", onResize);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+{"source_url": "https://www.nature.com/articles/323533a0",
+ "focus": "Learning representations by back-propagating errors (Rumelhart, Hinton and Williams, 1986). Explain how the chain rule propagates the error derivative backwards through a tiny network with one hidden unit and sigmoid activations. Let the learner change the input, the target and the two weights, and show the forward values, the error, and each partial derivative. Check that the back-propagated gradient for each weight matches a finite-difference estimate.",
+ "audience": "Engineering undergraduates who know derivatives"}

@@ -1,0 +1,3 @@
+{"source_url": "https://www.cs.princeton.edu/courses/archive/fall09/cos323/papers/black_scholes73.pdf",
+ "focus": "The Pricing of Options and Corporate Liabilities (Black and Scholes, 1973), the option valuation formula. Explain how the value of a European call depends on the stock price, strike, time to expiry, interest rate and volatility through d1 and d2. Let the learner change these inputs, show d1, d2, N(d1), N(d2) and the call value, and plot the call value against the stock price. Check put-call parity C - P = S - K e^(-rT) and that the call value never falls below max(S - K e^(-rT), 0).",
+ "audience": "Industrial engineering undergraduates"}

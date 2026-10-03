@@ -1,0 +1,3 @@
+{"source_url": "https://arxiv.org/abs/1904.09751",
+ "focus": "The Curious Case of Neural Text Degeneration, Section 3.1 (Nucleus Sampling). Explain how top-p sampling chooses the smallest set of tokens whose cumulative probability reaches p and rescales it. Use a small next-token distribution the learner can edit, a slider for p, and a comparison with top-k. Check that the rescaled distribution sums to one and that p = 1 keeps every token.",
+ "audience": "Undergraduate engineering students new to language models"}

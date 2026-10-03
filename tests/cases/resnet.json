@@ -1,0 +1,3 @@
+{"source_url": "https://arxiv.org/abs/1512.03385",
+ "focus": "Deep Residual Learning for Image Recognition, Section 3.1 and 3.2. Explain residual learning y = F(x) + x with identity shortcuts. With a tiny chain of scalar layers, let the learner change the number of layers and the layer weight, and compare how a signal and its gradient shrink or explode through a plain stack versus a residual stack. Check that when every residual branch outputs zero the residual network computes the identity.",
+ "audience": "Electrical engineering undergraduates"}

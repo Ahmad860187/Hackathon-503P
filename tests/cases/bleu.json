@@ -1,0 +1,3 @@
+{"source_url": "https://aclanthology.org/P02-1040.pdf",
+ "focus": "BLEU: a Method for Automatic Evaluation of Machine Translation (Papineni et al., 2002), Section 2 (modified n-gram precision and brevity penalty). Explain modified (clipped) n-gram precision and the brevity penalty using one short reference sentence and a few candidate sentences the learner can choose from. Show the clipped counts, the precisions for n = 1 to 4, the brevity penalty and the final score. Check that a candidate identical to the reference scores 1 and that repeating a reference word many times does not raise unigram precision above its clipped value.",
+ "audience": "Computer science undergraduates"}

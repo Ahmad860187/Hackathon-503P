@@ -1,0 +1,3 @@
+{"source_url": "http://infolab.stanford.edu/pub/papers/google.pdf",
+ "focus": "The Anatomy of a Large-Scale Hypertextual Web Search Engine, Section 2.1.1 (Description of PageRank Calculation). Explain PageRank on a tiny web graph of 3 to 5 pages. Let the learner edit which pages link to which and change the damping factor d. Show the iteration converging and the final ranks. Check that ranks of all pages sum to one in the normalized version and that a page with no incoming links gets the minimum rank (1-d)/N.",
+ "audience": "Second-year engineering students"}

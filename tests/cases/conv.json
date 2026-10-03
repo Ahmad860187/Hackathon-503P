@@ -1,0 +1,3 @@
+{"source_url": "https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf",
+ "focus": "ImageNet Classification with Deep Convolutional Neural Networks (Krizhevsky, Sutskever and Hinton, 2012), Section 3.5 overall architecture. Explain how a single 2-D convolution with stride and zero-padding turns an input feature map into an output feature map. Use a small input grid and a 3x3 kernel the learner can edit, and let them change stride and padding. Show the output map and which input window produced the highlighted output value. Check that the output side length equals floor((n + 2p - k)/s) + 1.",
+ "audience": "Second-year computer engineering students"}

@@ -1,0 +1,3 @@
+{"source_url": "https://arxiv.org/abs/1406.2661",
+ "focus": "Generative Adversarial Nets, Proposition 1 in Section 4.1. Explain the optimal discriminator D*(x) = p_data(x) / (p_data(x) + p_g(x)) for a fixed generator, using two one-dimensional Gaussian densities whose means and widths the learner can change. Plot both densities and D*. Check that D* equals 1/2 everywhere when the two distributions are identical and that D* always stays between 0 and 1.",
+ "audience": "Engineering undergraduates comfortable with probability densities"}

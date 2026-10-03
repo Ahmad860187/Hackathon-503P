@@ -1,0 +1,3 @@
+{"source_url": "https://arxiv.org/abs/1412.6980",
+ "focus": "Adam: A Method for Stochastic Optimization, Algorithm 1 and Section 3 (initialization bias correction). Explain how the first and second moment estimates are updated and why bias correction is needed early in training. Let the learner change beta1, beta2 and a short sequence of gradients, and show m_t, v_t, the bias-corrected estimates and the resulting step for each time step. Check that with a constant gradient the bias-corrected first moment equals that gradient at every step, and that without correction the early estimates are biased toward zero.",
+ "audience": "Third-year engineering undergraduates who have seen gradient descent"}

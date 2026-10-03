@@ -1,0 +1,3 @@
+{"source_url": "https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf",
+ "focus": "A Mathematical Theory of Communication, Section 12 (Entropy of a Discrete Channel with Noise / equivocation) is too broad, so focus only on the binary symmetric channel example: explain the capacity C = 1 - H(p) of a binary symmetric channel with crossover probability p. Let the learner change p and the input distribution, show the mutual information, the equivocation, and the capacity curve. Check that capacity is 1 bit at p = 0 and 0 bits at p = 0.5.",
+ "audience": "Communications engineering undergraduates"}
