@@ -17,9 +17,11 @@ python agent.py --input case.json --output out --model deepseek/deepseek-v4.1-fl
 with Bearer auth and use exactly the given MODEL_ID.
 
 `case.json` holds three strings: `source_url`, `focus` and `audience`. Any extra string fields are passed to
-the model as well. Requires Python 3.11 and nothing beyond `pip install -r requirements.txt`. The exit code is 0
-when a page was generated and nonzero otherwise. If generation fails, a fallback page and the trace are still
-written; a missing key or unreadable input writes only the trace.
+the model as well. Requires Python 3.11 and nothing beyond `pip install -r requirements.txt`. Exit codes: 0 when
+the page was generated and its mandatory checks pass; 3 when a usable page was written but a mandatory check
+(a crash, a brief-required test, or an invariant that is false at the defaults) is still failing, and the
+page shows it as failing; 1 when generation failed (a fallback page and the trace are still written); 2 for
+a missing key or unreadable input (trace only).
 
 ### Optional: browser input page
 
@@ -84,8 +86,11 @@ case.json
    - If a correctness check still fails, an independent fresh draft is generated and the better candidate
      is kept, because repairs tend to stay anchored to a wrong formula.
    - A check that still cannot pass is not hidden: it stays on the page, shown as failing, and is listed in
-     the trace (`keep_failing_checks_visible`). Only invariants that are not true for every input (that is,
-     mis-specified rather than failed) are dropped, and each drop is logged.
+     the trace (`keep_failing_checks_visible`). An invariant that is false at the default settings counts as
+     a real error and goes to repair; only invariants that hold at the defaults but fail elsewhere (that is,
+     mis-specified) are dropped, and each drop is logged.
+   - Each exploration step starts from the default settings before applying its preset, exactly as it
+     was validated, so earlier edits by the learner cannot change what a step shows.
 5. **Review.** One short call shows the model its own prose next to the outputs `compute()` produces at the
    defaults and at every exploration step. Every `{{…}}` placeholder is annotated with the value it will
    render. The model may rewrite only sentences that contradict the numbers, wrong causal explanations,

@@ -993,6 +993,7 @@ def validate(spec, code, runner, required_checks):
     base_sig = {}
     n_inv = len(inv_exprs)
     inv_fail, exceptions, nonfinite = {}, [], []
+    inv_fail_default = set()
     sens = {c["id"]: False for c in ctrls}
     edge_sigs = []
     tests_ok, expl_ok = [], []
@@ -1011,6 +1012,8 @@ def validate(spec, code, runner, required_checks):
         for k in range(n_inv):
             if k < len(vals) and not vals[k].get("pass") and not warned:
                 inv_fail.setdefault(k, (kind, label, job_["state"], vals[k]))
+                if kind == "default":
+                    inv_fail_default.add(k)
         extra = vals[n_inv:]
         if kind == "default":
             default_out = json.loads(res["sig"])
@@ -1063,8 +1066,13 @@ def validate(spec, code, runner, required_checks):
         add("error", "robustness", f"NaN/Infinity in out ({', '.join(paths[:5])}) for {len(nonfinite)} input states, e.g. "
             f"{_brief_state(st)}; handle the degenerate case and set out.warning")
     for k, (kind, lab, st, v) in inv_fail.items():
-        add("error", "invariants", f"invariant '{spec['invariants'][k]['label']}' (`{inv_exprs[k]}`) fails for state "
-            f"{_brief_state(st)}: {v.get('err') or 'got ' + str(v.get('val'))}", ref=k)
+        if k in inv_fail_default:
+            add("error", "invariants_default", f"invariant '{spec['invariants'][k]['label']}' (`{inv_exprs[k]}`) is false at "
+                f"the default settings, so the computation or the invariant is wrong: "
+                f"{v.get('err') or 'got ' + str(v.get('val'))}")
+        else:
+            add("error", "invariants", f"invariant '{spec['invariants'][k]['label']}' (`{inv_exprs[k]}`) fails for state "
+                f"{_brief_state(st)}: {v.get('err') or 'got ' + str(v.get('val'))}", ref=k)
     for cid, moved in sens.items():
         if not moved:
             add("error", "controls", f"control '{cid}' never changes any output; make it affect the computation or remove it",
@@ -1145,7 +1153,7 @@ def _err_keys(issues):
 
 
 _WEIGHT = {"compute": 1000, "robustness": 50, "views": 20, "readouts": 10, "structure": 5, "controls": 5, "placeholders": 4,
-           "tests": 4, "explorations": 4, "grounding": 3, "latex": 2, "invariants": 1}
+           "tests": 4, "explorations": 4, "invariants_default": 4, "grounding": 3, "latex": 2, "invariants": 1}
 
 
 def badness(issues):
@@ -1432,7 +1440,7 @@ _REPAIR_KEYS = {"controls": ("controls",), "readouts": ("readouts", "views"), "v
                 "invariants": ("invariants",), "tests": ("tests", "controls"), "explorations": ("explorations", "controls"),
                 "robustness": ("controls",), "compute": ("controls", "readouts", "views"),
                 "structure": ("equation", "symbols", "caveat", "explorations"), "grounding": ("grounding", "paper"),
-                "latex": ("equation", "symbols"), "placeholders": ("controls",)}
+                "latex": ("equation", "symbols"), "placeholders": ("controls",), "invariants_default": ("invariants",)}
 
 
 def repair_prompt(case, spec, code, issues, required_checks=()):
@@ -1755,7 +1763,8 @@ def _main():
             if n_errors(issues) == 0 or (rnd > max_repairs and not retried_hard):
                 break
             try:
-                hard = any(i.code in ("tests", "explorations", "robustness", "compute") for i in issues if i.sev == "error")
+                hard = any(i.code in ("tests", "explorations", "robustness", "compute", "invariants_default")
+                           for i in issues if i.sev == "error")
                 prompt = repair_prompt(case, spec, code, issues, checks)
                 if retried_hard or (hint and hard):
                     prompt += ("\nA previous fix attempt did not change these failures. Before the code, re-derive the "
@@ -1809,7 +1818,8 @@ def _main():
 
     # ---- if the computation still contradicts a required check or a claimed observation, try one fresh draft
     def correctness_errors(iss):
-        return [i for i in iss if i.sev == "error" and i.code in ("tests", "explorations", "compute", "robustness")]
+        return [i for i in iss if i.sev == "error" and i.code in ("tests", "explorations", "compute", "robustness",
+                                                                    "invariants_default")]
 
     if correctness_errors(issues) and llm.requests <= 3 and elapsed() < 300:
         trace.log("revise", "regenerate", "start", reason="correctness checks still failing after a repair",
@@ -1890,7 +1900,9 @@ def _main():
     (outdir / "index.html").write_text(doc, encoding="utf-8")
     trace.log("render", "write_index_html", "ok" if not problems else "warn", bytes=len(doc.encode("utf-8")),
               offline_problems=problems)
-    status = "success" if n_errors(issues) == 0 else "success_with_unresolved_issues"
+    mandatory = [i for i in issues if i.sev == "error" and i.code in ("compute", "robustness", "tests", "invariants_default")]
+    status = ("success" if n_errors(issues) == 0 else
+              "unresolved_mandatory_failures" if mandatory else "success_with_unresolved_issues")
     trace.log("finish", "summary", status, requests=llm.requests, prompt_tokens=llm.prompt_tokens,
               completion_tokens=llm.completion_tokens, reasoning_tokens=llm.reasoning_tokens,
               total_tokens=llm.prompt_tokens + llm.completion_tokens, revisions=revisions,
@@ -1898,7 +1910,7 @@ def _main():
     trace.close()
     print(f"wrote {outdir / 'index.html'} ({status}; {llm.requests} calls, "
           f"{llm.prompt_tokens + llm.completion_tokens} tokens, {elapsed():.1f}s)")
-    return 0
+    return 3 if mandatory else 0
 
 
 if __name__ == "__main__":

@@ -1244,6 +1244,7 @@ function applyPreset(i, j) {
   const su = setups(EXP[i])[j]; if (!su) return;
   const p = su.preset && typeof su.preset === "object" ? su.preset : {};
   const keys = Object.keys(p);
+  state = clone(DEF);  // every step starts from the defaults, exactly as it was validated
   keys.forEach(k => { const c = CMAP[k]; state[k] = c ? norm(c, clone(p[k])) : clone(p[k]); });
   syncAll();
   exStep[i] = j; activeEx = { i, j };
