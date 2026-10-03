@@ -791,6 +791,19 @@ function vHeat(d, W, k, title) {
     }
   }
   s += cells;
+  // optional outlines: cells [[i,j]], a box [i0,j0,i1,j1] (inclusive), whole rows / columns
+  const hbox = (a, b, c, e) => {
+    if (![a, b, c, e].every(fin)) return "";
+    const i0 = clamp(Math.round(Math.min(a, c)), 0, R - 1), i1 = clamp(Math.round(Math.max(a, c)), 0, R - 1);
+    const j0 = clamp(Math.round(Math.min(b, e)), 0, C - 1), j1 = clamp(Math.round(Math.max(b, e)), 0, C - 1);
+    return '<rect x="' + r1(gx + j0 * cw + 1.5) + '" y="' + r1(top + i0 * ch + 1.5) + '" width="' + r1(Math.max(2, (j1 - j0 + 1) * cw - 3)) + '" height="' + r1(Math.max(2, (i1 - i0 + 1) * ch - 3)) + '" fill="none" stroke="#ea580c" stroke-width="3" rx="2" pointer-events="none"/>';
+  };
+  let hl = "";
+  arr(d.highlight_cells).forEach(p => { if (Array.isArray(p) && p.length >= 2) hl += hbox(p[0], p[1], p[0], p[1]); });
+  if (Array.isArray(d.highlight_box) && d.highlight_box.length === 4) hl += hbox(d.highlight_box[0], d.highlight_box[1], d.highlight_box[2], d.highlight_box[3]);
+  arr(d.highlight_rows).forEach(i => { hl += hbox(i, 0, i, C - 1); });
+  arr(d.highlight_cols).forEach(j => { hl += hbox(0, j, R - 1, j); });
+  s += hl;
   if (d.ylabel) s += axTitleY(d.ylabel, ox + 13, top + gh / 2);
   const lw = Math.min(220, Math.max(120, gw)), ly = top + gh + 16;
   s += '<rect x="' + r1(gx) + '" y="' + ly + '" width="' + lw + '" height="10" rx="2" fill="url(#hg' + k + ')" stroke="#cbd2dc"/>' + T(gx, ly + 25, fmt(a0, dg), 'class="tk"') + T(gx + lw, ly + 25, fmt(a1, dg), 'class="tk" text-anchor="end"');

@@ -55,7 +55,7 @@ CONTROLS (s[id] is passed to compute; id matches [A-Za-z_][A-Za-z0-9_]*):
 VIEWS (type -> shape of out[data]; data is a top-level key of out):
  bars: {labels,values} or {labels,series:[{name,values}]}; optional xlabel,ylabel,ymin,ymax,yscale:"log",highlight:[index],digits,reference:{value,label}
  line: {x,series:[{name,y,dash}]}; optional xlabel,ylabel,xmin,xmax,ymin,ymax,yscale:"log",xscale:"log",markers:[{x,y,label}],vline:{x,label},hline:{y,label}
- heatmap: {matrix}; optional row_labels,col_labels,digits,min,max,xlabel,ylabel
+ heatmap: {matrix}; optional row_labels,col_labels,digits,min,max,xlabel,ylabel,highlight_cells:[[row,col]],highlight_box:[row0,col0,row1,col1],highlight_rows,highlight_cols (outlined; captions may mention a highlight only if the data sets it)
  plane: {vectors:[{x,y,label,from}],points:[{x,y,label}],paths:[{points:[[x,y]],label}]}; optional xlabel,ylabel,range:[x0,x1,y0,y1]
  graph: {nodes:[{id,label,value,x,y}],edges:[{from,to,weight,label}]}; optional directed,digits (x,y in [0,1] or omitted)
  pipeline: {stages:[{label,value,note}]}  value: number|string|number[]|number[][] — the mechanism's stages with live intermediate values
