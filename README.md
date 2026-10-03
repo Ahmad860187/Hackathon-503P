@@ -20,6 +20,19 @@ with Bearer auth and use exactly the given MODEL_ID.
 the model as well. The exit code is 0 when a page was generated and nonzero otherwise; even on failure, a
 fallback page and a trace are still written.
 
+### Optional: browser input page
+
+```bash
+python webui.py            # opens http://127.0.0.1:8800/ in your browser
+```
+
+A local page with three fields: paper link, what to explain, and who it is for. Example buttons fill in
+the public examples. While the page is generated it shows live progress through the agent's stages, then
+the finished page with its checks, calls, tokens and time. It also offers open, download, the trace, and a
+list of recent pages. It runs `agent.py` unchanged in a subprocess and stores results in `ui_runs/`. The API
+key comes from the environment (or can be typed in) and is never written to disk. It uses only the Python
+standard library and is not needed for the graded command above.
+
 ## Architecture: the LLM writes the science, Python writes the page
 
 ```
@@ -127,6 +140,7 @@ regeneration. Nothing in the code or prompts is specific to any paper.
 
 - `agent.py`: pipeline (OpenRouter client, parsing and JSON repair, normalization, V8 validation, repair
   loop, rendering, trace)
+- `webui.py`: optional local browser input page (standard library only; runs `agent.py` unchanged)
 - `prompts.py`: generic system prompts
 - `templates/page.html`: generic page template and renderer
 - `CONTRACT.md`: the data contract between the generator and the template
