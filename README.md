@@ -17,8 +17,9 @@ python agent.py --input case.json --output out --model deepseek/deepseek-v4.1-fl
 with Bearer auth and use exactly the given MODEL_ID.
 
 `case.json` holds three strings: `source_url`, `focus` and `audience`. Any extra string fields are passed to
-the model as well. The exit code is 0 when a page was generated and nonzero otherwise; even on failure, a
-fallback page and a trace are still written.
+the model as well. Requires Python 3.11 and nothing beyond `pip install -r requirements.txt`. The exit code is 0
+when a page was generated and nonzero otherwise. If generation fails, a fallback page and the trace are still
+written; a missing key or unreadable input writes only the trace.
 
 ### Optional: browser input page
 
@@ -40,8 +41,8 @@ case.json
   └─ understand   split `focus` into requirements and its explicit "check that …" statements
   └─ generate     1 LLM call → compact JSON spec + one pure JS `compute(s)` function
   └─ check        deterministic, no LLM: run compute() in embedded V8 about 150×
-  └─ revise       deterministic fixes first; then ≤1 targeted LLM patch; a fresh draft only if
-                  correctness checks still fail; keep the better candidate
+  └─ revise       deterministic fixes first; then ≤1 targeted LLM patch per draft; a fresh draft only if
+                  correctness checks still fail; keep the better candidate; at most one final patch
   └─ review       1 LLM call: prose checked against a table of the page's own computed values
                   (prose-only patch, re-validated, rejected if anything gets worse)
   └─ render       fixed, tested template + LaTeX→MathML + computed numbers filled into the prose
@@ -82,16 +83,19 @@ case.json
      patch is accepted only if a severity-weighted error score does not rise.
    - If a correctness check still fails, an independent fresh draft is generated and the better candidate
      is kept, because repairs tend to stay anchored to a wrong formula.
-   - A check that still cannot pass is removed from the learner-facing page and recorded in the trace and
-     in the page's generation report.
+   - A check that still cannot pass is not hidden: it stays on the page, shown as failing, and is listed in
+     the trace (`keep_failing_checks_visible`). Only invariants that are not true for every input (that is,
+     mis-specified rather than failed) are dropped, and each drop is logged.
 5. **Review.** One short call shows the model its own prose next to the outputs `compute()` produces at the
    defaults and at every exploration step. Every `{{…}}` placeholder is annotated with the value it will
    render. The model may rewrite only sentences that contradict the numbers, wrong causal explanations,
    overreaching paper attributions, a boilerplate caveat or undefined jargon. Presets, checks and code
    cannot be changed in this pass, and the patch is re-validated.
 6. **Render.** Python escapes all prose and converts LaTeX to MathML (`latex2mathml`). In multi-step
-   explorations, every filled number is labelled with its step, e.g. "0 (step 1) → 2 (step 2)". Section and
-   equation numbers that the brief does not state are dropped, as a guard against invented citations. The tested template
+   explorations, every filled number is labelled with its step, e.g. "H rises from 0 (step 1) to 2 (step 2)".
+   Section and equation numbers that the brief does not state are dropped from the citation line, as a guard
+   against invented citations. A section number in the brief does not validate an equation number, and vice
+   versa. The tested template
    (`templates/page.html`, vanilla JS/SVG) provides:
    - views: bars, line, heatmap, 2-D plane, graph, computation pipeline, table;
    - accessible controls: sliders, toggles, selects, and editable vectors and matrices with add/remove;
@@ -105,8 +109,9 @@ case.json
 **Budget and limits.** At most 6 requests (the cap is 10). Completion tokens are capped against 30k and
 there is a 540 s internal deadline (the cap is 600 s). Reasoning is disabled, and requests use OpenRouter's
 `provider.sort = "throughput"` for the given MODEL_ID. On the public examples, a typical run uses 2–3 calls,
-about 10–14k total tokens and 15–25 s. Hard cases that need a fresh draft use up to about 40k tokens and
-under 70 s. Worst-case completion tokens stay well under the cap (about 20k).
+about 10–14k total tokens and 15–25 s. Hard cases that need a fresh draft can use up to about 57k total
+tokens and up to about 2 minutes. Completion tokens are hard-capped at 30k minus a 300-token margin; over 130
+test runs the worst run used 29.7k, and only 3 runs used more than 20k.
 
 **No network access to the paper is assumed** (assessment allows only OpenRouter). The model works from
 the brief and its own knowledge of the paper. It is told to copy section and equation locations from the
@@ -134,7 +139,8 @@ final summary with totals. Credentials and hidden reasoning are never logged.
 During development, independent LLM judges scored generated pages against the rubric. They re-derived each
 paper's formula in Node to verify the numbers. Their findings drove the generic fixes above: computed
 numbers in prose, `prev`-step comparisons, coverage mapping, fixed probability colour scales and fresh-draft
-regeneration. Nothing in the code or prompts is specific to any paper.
+regeneration. The prompts contain only generic format examples; nothing in the code or prompts encodes the
+answer for a specific paper.
 
 ## Files
 
@@ -143,11 +149,12 @@ regeneration. Nothing in the code or prompts is specific to any paper.
 - `webui.py`: optional local browser input page (standard library only; runs `agent.py` unchanged)
 - `prompts.py`: generic system prompts
 - `templates/page.html`: generic page template and renderer
-- `CONTRACT.md`: the data contract between the generator and the template
+- `CONTRACT.md`: a summary of the data contract between the generator and the template
 
 ## Credits / reuse
 
 - [latex2mathml](https://github.com/roniemartinez/latex2mathml) (MIT): LaTeX → MathML.
 - [mini-racer](https://github.com/bpcreech/PyMiniRacer) (ISC): embedded V8 used to execute generated `compute()` during validation.
 - [json-repair](https://github.com/mangiucugna/json_repair) (MIT): last-resort repair of malformed model JSON.
-- [requests](https://requests.readthedocs.io/) (Apache-2.0).
+- [requests](https://requests.readthedocs.io/) (Apache-2.0) and its pinned dependencies urllib3 (MIT), certifi (MPL-2.0),
+  charset-normalizer (MIT) and idna (BSD-3-Clause).

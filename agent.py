@@ -58,10 +58,15 @@ class Trace:
     def __init__(self, path):
         self.f = open(path, "w", encoding="utf-8")
 
+    secret = ""
+
     def log(self, stage, action, result, **kw):
         ev = {"t": round(elapsed(), 3), "stage": stage, "action": action, "result": result}
         ev.update(kw)
-        self.f.write(json.dumps(ev, ensure_ascii=False, default=str) + "\n")
+        line = json.dumps(ev, ensure_ascii=False, default=str)
+        if self.secret and self.secret in line:
+            line = line.replace(self.secret, "[redacted]")
+        self.f.write(line + "\n")
         self.f.flush()
 
     def close(self):
@@ -118,6 +123,12 @@ class LLM:
                 continue
             usage = data.get("usage") or {}
             pt, ct = int(usage.get("prompt_tokens") or 0), int(usage.get("completion_tokens") or 0)
+            if status == 200 and not usage:
+                # no usage reported: count conservatively so the budget guards never under-count
+                body_chars = len(json.dumps(body["messages"]))
+                pt = body_chars // 3
+                ct = cap if not data.get("choices") else max(len(json.dumps(data.get("choices"))) // 3, 1)
+                self.trace.log(stage, "usage_missing", "estimated", prompt_tokens_est=pt, completion_tokens_est=ct)
             rt = int(((usage.get("completion_tokens_details") or {}).get("reasoning_tokens")) or 0)
             self.prompt_tokens += pt
             self.completion_tokens += ct
@@ -466,12 +477,16 @@ _LOC_NUM = re.compile(r"(?:section|sec\.?|§|eq(?:uation)?\.?|algorithm|theorem|
 
 def ground_locations(paper, focus):
     """Section/equation numbers the brief does not state are a hallucination risk: keep only verifiable ones."""
-    stated = {m.group(1) for m in _LOC_NUM.finditer(focus or "")}
+    def kind_of(m):
+        return "equation" if m.group(0).lower().startswith("eq") else "section"
+    stated = {"section": set(), "equation": set()}
+    for m in _LOC_NUM.finditer(focus or ""):
+        stated[kind_of(m)].add(m.group(1))
     out = dict(paper)
     for k in ("section", "equation"):
         val = out.get(k) or ""
         nums = [m.group(1) for m in _LOC_NUM.finditer(val)] or re.findall(r"\b\d+(?:\.\d+)*\b", val)
-        if nums and not any(n in stated for n in nums):
+        if nums and not any(n in stated[k] for n in nums):
             # strip the unverifiable number, keep a descriptive remainder if any
             desc = re.sub(r"\(([^()]*)\)", r"\1", _LOC_NUM.sub("", val))
             desc = re.sub(r"\b\d+(?:\.\d+)*\b", "", desc).strip(" ,;:-()")
@@ -1693,6 +1708,7 @@ def _main():
         print("error: OPENROUTER_API_KEY is not set", file=sys.stderr)
         return 2
 
+    trace.secret = key
     runner = JSRunner()
     llm = LLM(args.model, key, trace)
     reqs, checks = extract_requirements(_s(case.get("focus")))
@@ -1839,23 +1855,15 @@ def _main():
             except Exception as e:  # a malformed review never blocks the page
                 trace.log("review", "apply_prose_review", "error", error=f"{type(e).__name__}: {e}"[:300])
 
-    # ---- finalize: never show a learner a check that we could not make pass
+    # ---- finalize: drop mis-specified invariants; checks that still fail stay on the page, shown as failing
     spec, issues, summary, default_out = auto_fix(spec, code, issues, summary, default_out, runner, checks, trace,
                                                   "final", only_if_soft=False)
     removed = []
+    kept_failing = [i.msg[:160] for i in issues if i.sev == "error" and i.code in ("tests", "explorations")]
+    if kept_failing:
+        trace.log("finalize", "keep_failing_checks_visible", "unresolved", failing=kept_failing[:8])
     if runner.kind and code:
-        bad_tests = {i.msg.split("'")[1] for i in issues if i.code == "tests" and i.msg.startswith("test '")}
-        if bad_tests:
-            removed += [f"test: {t}" for t in bad_tests]
-            spec["tests"] = [t for t in spec["tests"] if t["label"] not in bad_tests]
         for i in issues:
-            if i.code == "explorations" and "expect" in i.msg:
-                m = re.match(r"exploration (\d+) step (\d+)", i.msg)
-                if m:
-                    k, j = int(m.group(1)) - 1, int(m.group(2)) - 1
-                    if 0 <= k < len(spec["explorations"]) and 0 <= j < len(spec["explorations"][k]["steps"]):
-                        removed.append(f"exploration {k + 1} step {j + 1} check")
-                        spec["explorations"][k]["steps"][j]["expect"] = ""
             if i.code == "invariants":
                 m = re.match(r"invariant '([^']*)'", i.msg)
                 if m:
